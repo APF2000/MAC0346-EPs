@@ -1,4 +1,4 @@
-atributos = {
+local atributos = {
 
   --[[
       hit points, strength,   magic,
