@@ -22,6 +22,20 @@ end
 
 local req = require "atributos"
 
+<<<<<<< HEAD
 return {
   ["a"] = "b"
 }
+=======
+local SIMULATOR = {}
+
+function SIMULATOR.run(scenario_input)
+
+  --Colocar lógica aqui
+  print("passei por aqui!")
+  return scenario_input
+  --return scenario_input.units
+end
+
+return SIMULATOR
+>>>>>>> 793e41af04baff0a0da3619978d6fb7e1786b578
