@@ -97,15 +97,17 @@ function COMBATE.critical(unit_1, unit_2, weapons, random1)
 end
 
 
-function COMBATE.dano(unit_1, unit_2, weapons, critical)
+function COMBATE.attack(unit_1, unit_2, weapons, critical)
   --[[ Função que recebe como entrada duas listas de stats de duas unidades em
   combate (unidade 1 ataca e unidade 2 defende); uma lista com as armas e seus
   atributos e uma variável que é 1 se ataque é crítico ou 0 se não o for.
-  Retorna o valor do dano.
+  Retorna o valor do HP da unidade defensora após o ataque executado.
   ]]
   local weapon_1 = unit_1.weapon --pega a arma da unidade 1
   local weapon_1_type = weapons[weapon_1].kind --pega tipo de arma da unidade 1
   local weapon_2_type = weapons[weapon_2].kind --pega tipo de arma da unidade 1
+
+  local oponent_life = unit_2.hp
 
   if weapons[weapon_1].eff == unit_2.trait then --verificando effectiveness bonus
     local eff_bonus = 2 --arma é eficiente contra unidade defensora
@@ -132,17 +134,18 @@ function COMBATE.dano(unit_1, unit_2, weapons, critical)
     local physical_power = unit_1.str + (weapons[weapon_1].mt + triangle_bonus_table[weapon_1_type][weapon_2_type]) * eff_bonus
     local physical_damage = (physical_power - unit_2.def) * critical_bonus --dano físico
 
-    sim_fisico = 0 --reseta flag
-    return physical_damage --retorna dano do ataque
+    oponent_life = math.max(0, oponent_life - physical_damage) --se dano for maior que a vida, não permite vida negativa
 
   else --ataque mágico
     local magical_power = unit_1.mag + (weapons[weapon_1].mt + triangle_bonus_table[weapon_1_type][weapon_2_type]) * eff_bonus
     local magical_damage = (magical_power - unit_2.def) * critical_bonus --dano mágico
     --calcular ataque mágico
 
-    sim_fisico = 0 --por precaução, reseta flag
-    return magical_damage --retorna dano do ataque
+    oponent_life = math.max(0, oponent_life - magical_damage) --se dano for maior que a vida, não permite vida negativa
   end
+  
+  sim_fisico = 0 --reseta flag
+  return oponent_life --retorna vida do oponente após ataque
 end
 
 return COMBATE
