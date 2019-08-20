@@ -104,21 +104,26 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
   Retorna o valor do HP da unidade defensora após o ataque executado.
   ]]
   local weapon_1 = unit_1.weapon --pega a arma da unidade 1
+  local weapon_2 = unit_2.weapon --pega a arma da unidade 2
+
   local weapon_1_type = weapons[weapon_1].kind --pega tipo de arma da unidade 1
   local weapon_2_type = weapons[weapon_2].kind --pega tipo de arma da unidade 2
 
   local oponent_life = unit_2.hp
+  local eff_bonus = 1 --default é não ter nenhuma vantagem
 
+  --[[Para nossos casos, nao teremos os campos trait ou eff:
   if weapons[weapon_1].eff == unit_2.trait then --verificando effectiveness bonus
-    local eff_bonus = 2 --arma é eficiente contra unidade defensora
+    eff_bonus = 2 --arma é eficiente contra unidade defensora
   else
-    local eff_bonus = 1 --arma não tem eficiência adicional contra unidade defensora
+    eff_bonus = 1 --arma não tem eficiência adicional contra unidade defensora
   end
-
+  ]]
+  local critical_bonus = 1 --default é não ser ataque crítico
   if critical == 1 then --calculando bônus de ataque crítico
-    local critical_bonus = 3 --há dano crítico
+    critical_bonus = 3 --há dano crítico
   else
-    local critical_bonus = 1 --não há dano crítico
+    critical_bonus = 1 --não há dano crítico
   end
 
   --Verificando se a arma dá dano físico:
