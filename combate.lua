@@ -97,14 +97,27 @@ function COMBATE.critical(unit_1, unit_2, weapons, random1)
 end
 
 
-function COMBATE.dano(unit_1, unit_2, weapons)
+function COMBATE.dano(unit_1, unit_2, weapons, critical)
   --[[ Função que recebe como entrada duas listas de stats de duas unidades em
-  combate (unidade 1 ataca e unidade 2 defende) e uma lista com as armas e seus
-  atriburos.
+  combate (unidade 1 ataca e unidade 2 defende); uma lista com as armas e seus
+  atributos e uma variável que é 1 se ataque é crítico ou 0 se não o for.
   Retorna o valor do dano.
   ]]
   local weapon_1 = unit_1.weapon --pega a arma da unidade 1
   local weapon_1_type = weapons[weapon_1].kind --pega tipo de arma da unidade 1
+  local weapon_2_type = weapons[weapon_2].kind --pega tipo de arma da unidade 1
+
+  if weapons[weapon_1].eff == unit_2.trait then --verificando effectiveness bonus
+    local eff_bonus = 2 --arma é eficiente contra unidade defensora
+  else
+    local eff_bonus = 1 --arma não tem eficiência adicional contra unidade defensora
+  end
+
+  if critical == 1 then --calculando bônus de ataque crítico
+    local critical_bonus = 3 --há dano crítico
+  else
+    local critical_bonus = 1 --não há dano crítico
+  end
 
   --Verificando se a arma dá dano físico:
   local armas_fisicas = {"sword", "axe", "lance", "bow"} --armas que dão ataque físico
@@ -116,15 +129,19 @@ function COMBATE.dano(unit_1, unit_2, weapons)
   end
   --
   if sim_fisico == 1 then --ataque físico
-
-    --calcular ataque físico
+    local physical_power = unit_1.str + (weapons[weapon_1].mt + triangle_bonus_table[weapon_1_type][weapon_2_type]) * eff_bonus
+    local physical_damage = (physical_power - unit_2.def) * critical_bonus --dano físico
 
     sim_fisico = 0 --reseta flag
-  else --ataque mágico
+    return physical_damage --retorna dano do ataque
 
+  else --ataque mágico
+    local magical_power = unit_1.mag + (weapons[weapon_1].mt + triangle_bonus_table[weapon_1_type][weapon_2_type]) * eff_bonus
+    local magical_damage = (magical_power - unit_2.def) * critical_bonus --dano mágico
     --calcular ataque mágico
 
     sim_fisico = 0 --por precaução, reseta flag
+    return magical_damage --retorna dano do ataque
   end
 end
 
