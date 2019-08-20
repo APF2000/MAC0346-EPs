@@ -19,10 +19,12 @@ local SIMULATOR = {}
 
 function SIMULATOR.run(scenario_input)
 
-  --Colocar lógica aqui
+  --Processar sequencia de ataques
+    -- Executar um ataque
+    -- Armazenar resultados na variável de output
+  --Retornar output finalizado
   print("passei por aqui!")
   return scenario_input
-  --return scenario_input.units
 end
 
 return SIMULATOR
