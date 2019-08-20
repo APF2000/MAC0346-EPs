@@ -28,14 +28,15 @@ local triangle_bonus_table = {
   }
 }
 
+
 function COMBATE.double_attack(unit_1, unit_2, weapons)
   --[[ Função que recebe como entrada duas listas de stats de duas unidades em
   combate; e uma lista das armas do jogo e seus atributos.
   Retorna 1 se houver double attack da unidade 1, 2 se houver double
   attack da unidade 2, ou 0 se não houver double attack por nenhuma das partes.
   ]]
-  local weapon_1 = unit_1.weapon
-  local weapon_2 = unit_2.weapon
+  local weapon_1 = unit_1.weapon --pega a arma da unidade 1
+  local weapon_2 = unit_2.weapon --pega a arma da unidade 2
   local atk_speed_1 = unit_1.spd - math.max(0, weapons[weapon_1].wt - unit_1.str)
   local atk_speed_2 = unit_2.spd - math.max(0, weapons[weapon_2].wt - unit_2.str)
 
@@ -49,17 +50,82 @@ function COMBATE.double_attack(unit_1, unit_2, weapons)
   return 0 --Se não entrar em nenhum dos casos, não houve double attack
 end
 
-function COMBATE.acerto(unit_1, unit_2, weapons)
+
+function COMBATE.acerto(unit_1, unit_2, weapons, random1, random2)
+  --[[ Função que recebe como entrada duas listas de stats de duas unidades em
+  combate (unidade 1 ataca e unidade 2 defende); uma lista com as armas e seus
+  atriburos e dois números pseudoaleatórios (entre 0 e 1).
+  Retorna 1 se o ataque da unidade 1 acertar, ou 0 se errar.
+  ]]
+  local weapon_1 = unit_1.weapon --pega a arma da unidade 1
+  local weapon_2 = unit_2.weapon --pega a arma da unidade 2
+
+  local weapon_1_type = weapons[weapon_1].kind --pega tipo de arma da unidade 1
+  local weapon_2_type = weapons[weapon_2].kind --pega tipo de arma da unidade 1
+
+  local atk_speed_2 = unit_2.spd - math.max(0, weapons[weapon_2].wt - unit_2.str) --attack speed do defensor
+
+  local acc = wapons[weapon_1].hit + unit_1.skl * 2 + unit_1.lck + triangle_bonus_table[weapon_1_type][weapon_2_type] * 10 --accuracy do atacante
+  local avo = atk_speed_2 * 2 + unit_2.lck --avoid do defensor
+
+  local hit_chance = math.max(0, math.min(100, acc - avo)) --cálculo da hit chance do ataque
+
+  if (random1*100 + random2*100)/2 <= hit_chance then
+    return 1 --ataque acertou
+  end
+  return 0 --ataque errou
+end
+
+
+function COMBATE.critical(unit_1, unit_2, weapons, random1)
+  --[[ Função que recebe como entrada duas listas de stats de duas unidades em
+  combate (unidade 1 ataca e unidade 2 defende); uma lista com as armas e seus
+  atriburos e um número pseudoaleatório (entre 0 e 1).
+  Retorna 1 se o ataque da unidade 1 for crítico, ou 0 se não.
+  ]]
+  local weapon_1 = unit_1.weapon --pega a arma da unidade 1
+
+  local critical_rate = weapons[weapon_1].crt + (unit_1.skl/2) --critical rate da unidade 1
+  local dodge = unit_2.lck --dodge da unidade 2
+
+  local critical_chance = math.max(0, math.min(100, critical_rate - dodge))
+
+  if random1 <= critical_rate then
+    return 1 --ataque foi crítico
+  end
+  return 0 --ataque não foi crítico
+end
+
+
+function COMBATE.dano(unit_1, unit_2, weapons)
   --[[ Função que recebe como entrada duas listas de stats de duas unidades em
   combate (unidade 1 ataca e unidade 2 defende) e uma lista com as armas e seus
   atriburos.
-  Retorna 1 se o ataque da unidade 1 acertar, ou 0 se errar.
+  Retorna o valor do dano.
   ]]
+  local weapon_1 = unit_1.weapon --pega a arma da unidade 1
+  local weapon_1_type = weapons[weapon_1].kind --pega tipo de arma da unidade 1
 
-  --implementar
+  --Verificando se a arma dá dano físico:
+  local armas_fisicas = {"sword", "axe", "lance", "bow"} --armas que dão ataque físico
+  local sim_fisico = 0 --flag que é 1 se dano é físico e 0 se é mágico
+  for index, value in ipairs(armas_fisicas) do
+    if value == weapon_1_type then
+      sim_fisico = 1 --dano é físico
+    end
+  end
+  --
+  if sim_fisico == 1 then --ataque físico
 
+    --calcular ataque físico
+
+    sim_fisico = 0 --reseta flag
+  else --ataque mágico
+
+    --calcular ataque mágico
+
+    sim_fisico = 0 --por precaução, reseta flag
+  end
 end
-
--- falta fazer uma função de acerto crítico e outra de dano!
 
 return COMBATE
