@@ -61,11 +61,11 @@ function COMBATE.acerto(unit_1, unit_2, weapons, random1, random2)
   local weapon_2 = unit_2.weapon --pega a arma da unidade 2
 
   local weapon_1_type = weapons[weapon_1].kind --pega tipo de arma da unidade 1
-  local weapon_2_type = weapons[weapon_2].kind --pega tipo de arma da unidade 1
+  local weapon_2_type = weapons[weapon_2].kind --pega tipo de arma da unidade 2
 
   local atk_speed_2 = unit_2.spd - math.max(0, weapons[weapon_2].wt - unit_2.str) --attack speed do defensor
 
-  local acc = wapons[weapon_1].hit + unit_1.skl * 2 + unit_1.lck + triangle_bonus_table[weapon_1_type][weapon_2_type] * 10 --accuracy do atacante
+  local acc = weapons[weapon_1].hit + unit_1.skl * 2 + unit_1.lck + triangle_bonus_table[weapon_1_type][weapon_2_type] * 10 --accuracy do atacante
   local avo = atk_speed_2 * 2 + unit_2.lck --avoid do defensor
 
   local hit_chance = math.max(0, math.min(100, acc - avo)) --cálculo da hit chance do ataque
@@ -105,7 +105,7 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
   ]]
   local weapon_1 = unit_1.weapon --pega a arma da unidade 1
   local weapon_1_type = weapons[weapon_1].kind --pega tipo de arma da unidade 1
-  local weapon_2_type = weapons[weapon_2].kind --pega tipo de arma da unidade 1
+  local weapon_2_type = weapons[weapon_2].kind --pega tipo de arma da unidade 2
 
   local oponent_life = unit_2.hp
 
@@ -143,7 +143,7 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
 
     oponent_life = math.max(0, oponent_life - magical_damage) --se dano for maior que a vida, não permite vida negativa
   end
-  
+
   sim_fisico = 0 --reseta flag
   return oponent_life --retorna vida do oponente após ataque
 end
