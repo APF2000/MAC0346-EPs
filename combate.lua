@@ -112,13 +112,14 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
   local oponent_life = unit_2.hp
   local eff_bonus = 1 --default é não ter nenhuma vantagem
 
-  --[[Para nossos casos, nao teremos os campos trait ou eff:
-  if weapons[weapon_1].eff == unit_2.trait then --verificando effectiveness bonus
-    eff_bonus = 2 --arma é eficiente contra unidade defensora
-  else
-    eff_bonus = 1 --arma não tem eficiência adicional contra unidade defensora
+  if weapons[weapon_1].eff then--verifica se tem campo eff
+    if weapons[weapon_1].eff == unit_2.trait then --verificando effectiveness bonus
+      eff_bonus = 2 --arma é eficiente contra unidade defensora
+    else
+      eff_bonus = 1 --arma não tem eficiência adicional contra unidade defensora
+    end
   end
-  ]]
+
   local critical_bonus = 1 --default é não ser ataque crítico
   if critical == 1 then --calculando bônus de ataque crítico
     critical_bonus = 3 --há dano crítico
