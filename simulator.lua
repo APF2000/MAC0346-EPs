@@ -7,7 +7,7 @@ local SIMULATOR = {}
 function SIMULATOR.run(scenario_input)
   math.randomseed(scenario_input.seed) --inicializa gerador de números pseudoaleatórios com semente adequada
 
-  
+
   --[[ Precisa ver como inicializar output de acordo com o do sample scenarios
   local numero_unidades = 0 --contador do numero de unidades do cenário
   for key, value in pairs(scenario_input.units) do
@@ -56,6 +56,7 @@ function SIMULATOR.run(scenario_input)
             critical = combate.critical(unit_2, unit_1, weapons, math.random()) --flag para indicar se ataque é crítico
           end
           output.units[unit_1] = combate.attack(unit_2, unit_1, weapons, critical) --atualiza vida do defensor
+        end
       end
     end
     count = count + 1 --incrementa contador
