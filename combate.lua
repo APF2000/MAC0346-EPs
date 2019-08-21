@@ -54,7 +54,7 @@ end
 function COMBATE.acerto(unit_1, unit_2, weapons, random1, random2)
   --[[ Função que recebe como entrada duas listas de stats de duas unidades em
   combate (unidade 1 ataca e unidade 2 defende); uma lista com as armas e seus
-  atriburos e dois números pseudoaleatórios (entre 0 e 1).
+  atriburos e dois números pseudoaleatórios (entre 1 e 100).
   Retorna 1 se o ataque da unidade 1 acertar, ou 0 se errar.
   ]]
   local weapon_1 = unit_1.weapon --pega a arma da unidade 1
@@ -70,7 +70,7 @@ function COMBATE.acerto(unit_1, unit_2, weapons, random1, random2)
 
   local hit_chance = math.max(0, math.min(100, acc - avo)) --cálculo da hit chance do ataque
 
-  if (random1*100 + random2*100)/2 <= hit_chance then
+  if (random1 + random2)/2 <= hit_chance then
     return 1 --ataque acertou
   end
   return 0 --ataque errou
@@ -80,7 +80,7 @@ end
 function COMBATE.critical(unit_1, unit_2, weapons, random1)
   --[[ Função que recebe como entrada duas listas de stats de duas unidades em
   combate (unidade 1 ataca e unidade 2 defende); uma lista com as armas e seus
-  atriburos e um número pseudoaleatório (entre 0 e 1).
+  atriburos e um número pseudoaleatório (entre 1 e 100).
   Retorna 1 se o ataque da unidade 1 for crítico, ou 0 se não.
   ]]
   local weapon_1 = unit_1.weapon --pega a arma da unidade 1
