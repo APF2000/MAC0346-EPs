@@ -33,8 +33,10 @@ local input = {
 }
 
 
---[[ Testar Combate
+-- Testar Combate
 local comb = require "combate"
+
 local ataque_duplo = comb.double_attack(input.units.Soren, input.units.Ike, input.weapons)
 print(ataque_duplo)
-]]
+
+ataque_duplo = comb.double_attack(input.)

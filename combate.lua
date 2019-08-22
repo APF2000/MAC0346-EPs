@@ -65,7 +65,8 @@ function COMBATE.acerto(unit_1, unit_2, weapons, random1, random2)
 
   local atk_speed_2 = unit_2.spd - math.max(0, weapons[weapon_2].wt - unit_2.str) --attack speed do defensor
 
-  local acc = weapons[weapon_1].hit + unit_1.skl * 2 + unit_1.lck + triangle_bonus_table[weapon_1_type][weapon_2_type] * 10 --accuracy do atacante
+  local triangle = triangle_bonus_table[weapon_1_type][weapon_2_type]
+  local acc = weapons[weapon_1].hit + unit_1.skl * 2 + unit_1.lck + triangle * 10 --accuracy do atacante
   local avo = atk_speed_2 * 2 + unit_2.lck --avoid do defensor
 
   local hit_chance = math.max(0, math.min(100, acc - avo)) --cálculo da hit chance do ataque
@@ -136,14 +137,16 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
     end
   end
   --
+  local triangle = triangle_bonus_table[weapon_1_type][weapon_2_type]
+
   if sim_fisico == 1 then --ataque físico
-    local physical_power = unit_1.str + (weapons[weapon_1].mt + triangle_bonus_table[weapon_1_type][weapon_2_type]) * eff_bonus
+    local physical_power = unit_1.str + (weapons[weapon_1].mt + triangle) * eff_bonus
     local physical_damage = (physical_power - unit_2.def) * critical_bonus --dano físico
 
     oponent_life = math.max(0, oponent_life - physical_damage) --se dano for maior que a vida, não permite vida negativa
 
   else --ataque mágico
-    local magical_power = unit_1.mag + (weapons[weapon_1].mt + triangle_bonus_table[weapon_1_type][weapon_2_type]) * eff_bonus
+    local magical_power = unit_1.mag + (weapons[weapon_1].mt + triangle) * eff_bonus
     local magical_damage = (magical_power - unit_2.def) * critical_bonus --dano mágico
     --calcular ataque mágico
 
