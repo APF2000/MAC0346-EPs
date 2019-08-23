@@ -5,13 +5,16 @@ local combate = require "combate" --chamando módulo de combate
 local SIMULATOR = {}
 
 local function calculaCritical(unit_1, unit_2, weapons, ataque)
+
   acerto = combate.acerto(unit_2, unit_1, weapons, math.random(1, 100), math.random(1, 100)) --flag de acerto do ataque
+
   if acerto == 1 then--ataque acertou
     critical = combate.critical(unit_2, unit_1, weapons, math.random(1, 100)) --flag para indicar se ataque é crítico
   end
+
   if(ataque == true) then --se o atacante for a unidade 1
     scenario_input.units[unit_1].hp = combate.attack(unit_2, unit_1, weapons, critical) --atualiza vida do defensor
-  end
+
   else
     scenario_input.units[unit_2].hp = combate.attack(unit_1, unit_2, weapons, critical)
   end

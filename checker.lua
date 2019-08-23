@@ -36,4 +36,3 @@ function CHECKER.compare(received_state, expected_state)
 end
 
 return CHECKER
-
