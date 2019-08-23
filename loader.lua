@@ -13,4 +13,3 @@ function LOADER.load(path)
 end
 
 return LOADER
-

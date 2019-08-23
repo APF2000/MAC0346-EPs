@@ -40,6 +40,11 @@ function COMBATE.double_attack(unit_1, unit_2, weapons)
   local atk_speed_1 = unit_1.spd - math.max(0, weapons[weapon_1].wt - unit_1.str)
   local atk_speed_2 = unit_2.spd - math.max(0, weapons[weapon_2].wt - unit_2.str)
 
+  print("DOUBLE ATTACK")
+  print(unit_1.name, " tem hp ", unit_1.hp)
+  print(unit_2.name, " tem hp ", unit_2.hp)
+  print()
+
   if math.abs(atk_speed_1 - atk_speed_2) >= 4 then
     if atk_speed_1 > atk_speed_2 then
       return 1 --Unidade 1 realizará um segundo ataque
@@ -69,6 +74,11 @@ function COMBATE.acerto(unit_1, unit_2, weapons, random1, random2)
   local acc = weapons[weapon_1].hit + unit_1.skl * 2 + unit_1.lck + triangle * 10 --accuracy do atacante
   local avo = atk_speed_2 * 2 + unit_2.lck --avoid do defensor
 
+    print("ACERTO")
+    print(unit_1.name, " tem hp ", unit_1.hp)
+    print(unit_2.name, " tem hp ", unit_2.hp)
+    print()
+
   local hit_chance = math.max(0, math.min(100, acc - avo)) --cálculo da hit chance do ataque
 
   if (random1 + random2)/2 <= hit_chance then
@@ -91,6 +101,11 @@ function COMBATE.critical(unit_1, unit_2, weapons, random1)
 
   local critical_chance = math.max(0, math.min(100, critical_rate - dodge))
 
+  print("CRITICAL")
+  print(unit_1.name, " tem hp ", unit_1.hp)
+  print(unit_2.name, " tem hp ", unit_2.hp)
+  print()
+
   if random1 <= critical_rate then
     return 1 --ataque foi crítico
   end
@@ -112,6 +127,11 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
 
   local oponent_life = unit_2.hp
   local eff_bonus = 1 --default é não ter nenhuma vantagem
+
+  print("ATTACK")
+  print(unit_1.name, " tem hp ", unit_1.hp)
+  print(unit_2.name, " tem hp ", unit_2.hp)
+  print()
 
   if weapons[weapon_1].eff then--verifica se tem campo eff
     if weapons[weapon_1].eff == unit_2.trait then --verificando effectiveness bonus
@@ -156,5 +176,6 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
   sim_fisico = 0 --reseta flag
   return oponent_life --retorna vida do oponente após ataque
 end
+
 
 return COMBATE
