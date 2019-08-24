@@ -18,6 +18,7 @@ local function resultadoBatalha(unit_1, unit_2, weapons, scenario)
     acerto = combate.acerto(unit_1, unit_2, weapons, random1, random2) --flag de acerto do ataque
     print("(((((((((((((((((((((((((((())))))))))))))))))))))))))))")
     if acerto == 1 then
+      print("random 3 = ", random3)
       critical = combate.critical(unit_1, unit_2, weapons, random3) --flag para indicar se ataque é crítico
 
       print("calculando critical")
@@ -25,26 +26,27 @@ local function resultadoBatalha(unit_1, unit_2, weapons, scenario)
       print("(((((((((((((((((((((((((((())))))))))))))))))))))))))))")
 
       print("atqueeeeeeeeeeeeeeeeeeeeeeeeeee")
-      unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical)
-      scenario.units[unit_2.name].hp = unit_2.hp --atualiza vida do defensor
-
+      if(unit_1.hp > 0 and unit_2.hp > 0) then
+        unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical)
+        scenario.units[unit_2.name].hp = unit_2.hp --atualiza vida do defensor
+      
         print(unit_1.name, " tem hp ", unit_1.hp)
         print(unit_2.name, " tem hp ", unit_2.hp)
 
-      print("(((((((((((((((((((((((((((())))))))))))))))))))))))))))")
-      print("calculando se tem double")
-      double = combate.double_attack(unit_1, unit_2, scenario.weapons)
-      print("double da 1 = ", double)
-      print("(((((((((((((((((((((((((((())))))))))))))))))))))))))))")
+        print("(((((((((((((((((((((((((((())))))))))))))))))))))))))))")
+        print("calculando se tem double")
+        double = combate.double_attack(unit_1, unit_2, scenario.weapons)
+        print("double da 1 = ", double)
+        print("(((((((((((((((((((((((((((())))))))))))))))))))))))))))")
 
-      if(double == 1 and unit_1.hp > 0 and unit_2.hp > 0) then
-        unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical)
-        scenario.units[unit_2.name].hp = unit_2.hp --atualiza vida do defensor
+        if(double == 1 and unit_1.hp > 0 and unit_2.hp > 0) then
+          unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical)
+          scenario.units[unit_2.name].hp = unit_2.hp --atualiza vida do defensor
 
-          print(unit_1.name, " tem hp ", unit_1.hp)
-          print(unit_2.name, " tem hp ", unit_2.hp)
+            print(unit_1.name, " tem hp ", unit_1.hp)
+            print(unit_2.name, " tem hp ", unit_2.hp)
+        end
       end
-
     end
     print("(((((((((((((((((((((((((((())))))))))))))))))))))))))))")
     print("vez da defesa")
@@ -62,25 +64,28 @@ local function resultadoBatalha(unit_1, unit_2, weapons, scenario)
       print("(((((((((((((((((((((((((((())))))))))))))))))))))))))))")
 
       print("defesaaaaaaaaaaaaaa atacando")
-      unit_1.hp = combate.attack(unit_2, unit_1, weapons, critical)
-      scenario.units[unit_1.name].hp = unit_1.hp
-
-
-
-      print(unit_1.name, " tem hp ", unit_1.hp)
-      print(unit_2.name, " tem hp ", unit_2.hp)
-      print("(((((((((((((((((((((((((((())))))))))))))))))))))))))))")
-      print("calculando double da 2")
-      double = combate.double_attack(unit_1, unit_2, scenario.weapons)
-      print("double 2 = ", double)
-      print("(((((((((((((((((((((((((((())))))))))))))))))))))))))))")
-
-      if(double == 2 and unit_1.hp > 0 and unit_2.hp > 0) then
+      if unit_1.hp > 0 and unit_2.hp > 0 then
         unit_1.hp = combate.attack(unit_2, unit_1, weapons, critical)
-        scenario.units[unit_1.name].hp = unit_1.hp --atualiza vida do defensor
+        scenario.units[unit_1.name].hp = unit_1.hp
 
-          print(unit_1.name, " tem hp ", unit_1.hp)
-          print(unit_2.name, " tem hp ", unit_2.hp)
+
+
+
+        print(unit_1.name, " tem hp ", unit_1.hp)
+        print(unit_2.name, " tem hp ", unit_2.hp)
+        print("(((((((((((((((((((((((((((())))))))))))))))))))))))))))")
+        print("calculando double da 2")
+        double = combate.double_attack(unit_1, unit_2, scenario.weapons)
+        print("double 2 = ", double)
+        print("(((((((((((((((((((((((((((())))))))))))))))))))))))))))")
+
+        if(double == 2 and unit_1.hp > 0 and unit_2.hp > 0) then
+          unit_1.hp = combate.attack(unit_2, unit_1, weapons, critical)
+          scenario.units[unit_1.name].hp = unit_1.hp --atualiza vida do defensor
+
+            print(unit_1.name, " tem hp ", unit_1.hp)
+            print(unit_2.name, " tem hp ", unit_2.hp)
+        end
       end
     end
 

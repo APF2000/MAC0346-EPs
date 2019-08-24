@@ -181,6 +181,7 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
     local physical_damage = (physical_power - unit_2.def) * critical_bonus --dano físico
 
     print("str = ", unit_1.str, ", mt = ", weapons[weapon_1].mt, "triangle = ", triangle, "eff_bonus", eff_bonus)
+    print("unit2.def = ", unit_2.def, ", criticalbonus = ", critical_bonus)
     print("poder e dano fisicos= ", physical_power, physical_damage)
     oponent_life = math.max(0, oponent_life - physical_damage) --se dano for maior que a vida, não permite vida negativa
 
