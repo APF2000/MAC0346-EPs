@@ -39,9 +39,8 @@ function COMBATE.double_attack(unit_1, unit_2, weapons)
   local weapon_2 = unit_2.weapon --pega a arma da unidade 2
   local atk_speed_1 = unit_1.spd - math.max(0, weapons[weapon_1].wt - unit_1.str)
   local atk_speed_2 = unit_2.spd - math.max(0, weapons[weapon_2].wt - unit_2.str)
-  print("----------------------------------------------------------------")
-  print("atk_speed_1", atk_speed_1)
-  print("atk_speed_2", atk_speed_2)
+  --print("atk_speed_1", atk_speed_1)
+  --print("atk_speed_2", atk_speed_2)
 
   --[[print("DOUBLE ATTACK")
   print(unit_1.name, " tem hp ", unit_1.hp)
@@ -50,7 +49,9 @@ function COMBATE.double_attack(unit_1, unit_2, weapons)
 
   if math.abs(atk_speed_1 - atk_speed_2) >= 4 then
     if atk_speed_1 > atk_speed_2 then
-      return true --Unidade 1 realizará um segundo ataque
+      return 1 --Unidade 1 realizará um segundo ataque
+    else
+      return 2 --Unidade 2 realizará um segundo ataque
     end
   end
   return false --Se não entrar em nenhum dos casos, não houve double attack
@@ -107,11 +108,11 @@ function COMBATE.critical(unit_1, unit_2, weapons, random1)
 
   local critical_chance = math.max(0, math.min(100, critical_rate - dodge))
 
-    print("CRITICAL random1 = ", random1)
+    --[[print("CRITICAL random1 = ", random1)
     print("critical rate = ", critical_rate)
     print("dodge = ", dodge)
     print("critical_chance", critical_chance)
-    print("random1", random1)
+    print("random1", random1)]]
   if random1 <= critical_rate then
     return 1 --ataque foi crítico
   else
@@ -140,13 +141,13 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
   print()
 
   if weapons[weapon_1].eff then--verifica se tem campo eff
-    print("tem effectiveness")
+    --print("tem effectiveness")
     if weapons[weapon_1].eff == unit_2.trait then --verificando effectiveness bonus
       eff_bonus = 2 --arma é eficiente contra unidade defensora
-      print("Arma atacante de ", unit_1.name, " tem eficiencia adicional")
+      --print("Arma atacante de ", unit_1.name, " tem eficiencia adicional")
     else
       eff_bonus = 1 --arma não tem eficiência adicional contra unidade defensora
-      print("Arma atacante de ", unit_1.name, " nao tem eficiencia adicional")
+      --print("Arma atacante de ", unit_1.name, " nao tem eficiencia adicional")
     end
   end
 
@@ -166,7 +167,6 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
     if value == weapon_1_type then
       sim_fisico = 1 --dano é físico
       print("arma com  dano fisico")
-
     end
   end
   if(sim_fisico == 0) then
@@ -186,8 +186,14 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
 
   else --ataque mágico
     local magical_power = unit_1.mag + (weapons[weapon_1].mt + triangle) * eff_bonus
-    local magical_damage = (magical_power - unit_2.def) * critical_bonus --dano mágico
+    local magical_damage = (magical_power - unit_2.res) * critical_bonus --dano mágico
     --calcular ataque mágico
+    print("magia = ", unit_1.mag)
+    print("might = ", weapons[weapon_1].mt)
+    print("triangle = ", triangle)
+    print("effbonus = ", eff_bonus)
+    print("res2 = ", unit_2.res)
+    print("crt bonus = ", critical_bonus)
     print("poder e dano magicos= ", magical_power, magical_damage)
 
 
