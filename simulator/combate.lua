@@ -64,7 +64,7 @@ function COMBATE.acerto(unit_1, unit_2, weapons, random1, random2)
   atriburos e dois números pseudoaleatórios (entre 1 e 100).
   Retorna 1 se o ataque da unidade 1 acertar, ou 0 se errar.
   ]]
-  print("ACERTO: random1 = ", random1, ", random2 = ", random2)
+  --print("ACERTO: random1 = ", random1, ", random2 = ", random2)
   local weapon_1 = unit_1.weapon --pega a arma da unidade 1
   local weapon_2 = unit_2.weapon --pega a arma da unidade 2
 
@@ -72,25 +72,25 @@ function COMBATE.acerto(unit_1, unit_2, weapons, random1, random2)
   local weapon_2_type = weapons[weapon_2].kind --pega tipo de arma da unidade 2
 
   local atk_speed_2 = unit_2.spd - math.max(0, weapons[weapon_2].wt - unit_2.str) --attack speed do defensor
-  print("atk_speed_2 = ", atk_speed_2)
+  --print("atk_speed_2 = ", atk_speed_2)
 
   local triangle = triangle_bonus_table[weapon_1_type][weapon_2_type]
   local acc = weapons[weapon_1].hit + unit_1.skl * 2 + unit_1.lck + triangle * 10 --accuracy do atacante
   local avo = atk_speed_2 * 2 + unit_2.lck --avoid do defensor
 
-  print("triangle = ", triangle)
-  print("acc = ", acc)
-  print("avo = ", avo)
+  --print("triangle = ", triangle)
+  --print("acc = ", acc)
+  --print("avo = ", avo)
 
   local hit_chance = math.max(0, math.min(100, acc - avo)) --cálculo da hit chance do ataque
 
-  print("(random1 + random2)/2", (random1+random2)/2)
+  --print("(random1 + random2)/2", (random1+random2)/2)
   if (random1 + random2)/2 <= hit_chance then
-    print("acertou miseraaaaaaaaaaaaaaaaaaaaaaaaavi")
+    --print("acertou miseraaaaaaaaaaaaaaaaaaaaaaaaavi")
     return 1 --ataque acertou
 
   end
-  print("errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrou")
+  --print("errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrou")
   return 0 --ataque errou
 end
 
@@ -135,10 +135,10 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
   local oponent_life = unit_2.hp
   local eff_bonus = 1 --default é não ter nenhuma vantagem
 
-  print("ATTACK")
-  print(unit_1.name, " tem hp ", unit_1.hp)
-  print(unit_2.name, " tem hp ", unit_2.hp)
-  print()
+  --print("ATTACK")
+  --print(unit_1.name, " tem hp ", unit_1.hp)
+  --print(unit_2.name, " tem hp ", unit_2.hp)
+  --print()
 
   if weapons[weapon_1].eff then--verifica se tem campo eff
     --print("tem effectiveness")
@@ -174,32 +174,38 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
   end
   --
   local triangle = triangle_bonus_table[weapon_1_type][weapon_2_type]
-  print("triangle = ", triangle)
+  --print("triangle = ", triangle)
 
   if sim_fisico == 1 then --ataque físico
     local physical_power = unit_1.str + (weapons[weapon_1].mt + triangle) * eff_bonus
     local physical_damage = (physical_power - unit_2.def) * critical_bonus --dano físico
 
-    print("str = ", unit_1.str, ", mt = ", weapons[weapon_1].mt, "triangle = ", triangle, "eff_bonus", eff_bonus)
-    print("unit2.def = ", unit_2.def, ", criticalbonus = ", critical_bonus)
+    --print("str = ", unit_1.str, ", mt = ", weapons[weapon_1].mt, "triangle = ", triangle, "eff_bonus", eff_bonus)
+    --print("unit2.def = ", unit_2.def, ", criticalbonus = ", critical_bonus)
+    print("\nantes: opponent = ", oponent_life)
+    print("phy_damage", physical_damage)
+    print('dif = ', oponent_life - physical_damage)
     print("poder e dano fisicos= ", physical_power, physical_damage)
     oponent_life = math.max(0, oponent_life - physical_damage) --se dano for maior que a vida, não permite vida negativa
-
+    print("depois: opponent_life = ", oponent_life)
   else --ataque mágico
     local magical_power = unit_1.mag + (weapons[weapon_1].mt + triangle) * eff_bonus
     local magical_damage = (magical_power - unit_2.res) * critical_bonus --dano mágico
     --calcular ataque mágico
-    print("magia = ", unit_1.mag)
-    print("might = ", weapons[weapon_1].mt)
-    print("triangle = ", triangle)
-    print("effbonus = ", eff_bonus)
-    print("res2 = ", unit_2.res)
-    print("crt bonus = ", critical_bonus)
+    --print("magia = ", unit_1.mag)
+    --print("might = ", weapons[weapon_1].mt)
+    --print("triangle = ", triangle)
+    --print("effbonus = ", eff_bonus)
+    --print("res2 = ", unit_2.res)
+    --print("crt bonus = ", critical_bonus)
     print("poder e dano magicos= ", magical_power, magical_damage)
 
-
+    print("\nantes: opponent = ", oponent_life)
+    print("magical_damage", magical_damage)
+    print('dif = ', oponent_life - magical_damage)
     oponent_life = math.max(0, oponent_life - magical_damage) --se dano for maior que a vida, não permite vida negativa
-    print("oponent_life = ", oponent_life)
+
+    print("depois: oponent_life = ", oponent_life)
   end
 
   sim_fisico = 0 --reseta flag
