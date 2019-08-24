@@ -131,7 +131,7 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
   --Verificando se a arma dá dano físico:
   local armas_fisicas = {"sword", "axe", "lance", "bow"} --armas que dão ataque físico
   local sim_fisico = 0 --flag que é 1 se dano é físico e 0 se é mágico
-  for value in ipairs(armas_fisicas) do
+  for index, value in ipairs(armas_fisicas) do
     if value == weapon_1_type then
       sim_fisico = 1 --dano é físico
     end
