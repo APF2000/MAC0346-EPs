@@ -6,26 +6,17 @@ local SIMULATOR = {}
 
 local function resultadoBatalha(unit_1, unit_2, weapons, scenario)
 
-  local critical = 0
-  local acerto = 0
-  local double = 0
-  local random1 = math.random(1, 100)
-  local random2 = math.random(1, 100)
-  local random3 = math.random(1, 100)
-
-  local acerto1 = combate.acerto(unit_1, unit_2, weapons, random1, random2)
-  local acerto2 = combate.acerto(unit_2, unit_1, weapons, random1, random2)
-
-  local critical1 = combate.critical(unit_1, unit_2, weapons, random3)
-  local critical2 = combate.critical(unit_2, unit_1, weapons, random3)
-
-    --Ataque
+    -- Ataque
     print("VEZ DO ATAQUEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
     if unit_1.hp > 0 and unit_2.hp > 0 then
-
-      if acerto1 == 1 then
+      --Verificando se acertou:
+      local acerto = combate.acerto(unit_1, unit_2, weapons, math.random(1,100), math.random(1,100))
+      if acerto == 1 then
           print("acertou")
-          unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical1)
+          --Calculando se é crítico:
+          local critical = combate.critical(unit_1, unit_2, weapons, math.random(1, 100))
+          --Executando ataque:
+          unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical)
           scenario.units[unit_2.name].hp = unit_2.hp --atualiza vida do defensor
 
           print(unit_1.name, " tem hp ", unit_1.hp)
@@ -33,14 +24,19 @@ local function resultadoBatalha(unit_1, unit_2, weapons, scenario)
           print()
 
       end
+    end
 
-
-      print("vez da defesaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-      --Defesa
-
-      if acerto2 == 1 then
+    -- Defesa
+    print("vez da defesaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    if unit_2.hp > 0 then --verifica se unidade defensora ainda está viva
+      --Verificando se acertou:
+      local acerto = combate.acerto(unit_2, unit_1, weapons, math.random(1,100), math.random(1,100))
+      if acerto == 1 then
           print("acertou")
-          unit_1.hp = combate.attack(unit_2, unit_1, weapons, critical2)
+          --Calculando se é crítico:
+          local critical = combate.critical(unit_2, unit_1, weapons, math.random(1,100))
+          --Executando ataque:
+          unit_1.hp = combate.attack(unit_2, unit_1, weapons, critical)
           scenario.units[unit_1.name].hp = unit_1.hp
 
           print(unit_1.name, " tem hp ", unit_1.hp)
@@ -49,30 +45,46 @@ local function resultadoBatalha(unit_1, unit_2, weapons, scenario)
       end
     end
 
-    double = combate.double_attack(unit_1, unit_2, scenario.weapons)
-    print("double = ", double)
+    -- Double Attack
+    local double_attack = combate.double_attack(unit_1, unit_2, scenario.weapons)
+    print("double = ", double_attack)
 
-    if unit_1.hp > 0 and unit_2.hp > 0  then
-      if acerto1 == 1 and double == 1 then
+    if unit_1.hp > 0 and unit_2.hp > 0  and double_attack then --verifica se ambas unidades estão vivas e houve double attack
+      if double_attack == 1 then --double attack da unidade atacante
         print("double attackkkkkkkkkkkkkkkkkkkkkkkkkkkk do 1")
-        unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical1)
-        scenario.units[unit_2.name].hp = unit_2.hp --atualiza vida do defensor
+        --Verificando se acertou:
+        local acerto = combate.acerto(unit_1, unit_2, weapons, math.random(1,100), math.random(1,100))
+        if acerto == 1 then
+          print("acertou")
+          --Calculando se é crítico:
+          local critical = combate.critical(unit_1, unit_2, weapons, math.random(1,100))
+          --Executando ataque:
+          unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical)
+          scenario.units[unit_2.name].hp = unit_2.hp --atualiza vida do defensor
 
           print(unit_1.name, " tem hp ", unit_1.hp)
           print(unit_2.name, " tem hp ", unit_2.hp)
           print()
-      end
+        end
 
-      if acerto2 == 1 and double == 2 then
+      else --double attack da unidade defensora
         print("double attackkkkkkkkkkkkkkkkkkkkkkkkkkkkk do 2")
-        unit_1.hp = combate.attack(unit_2, unit_1, weapons, critical2)
-        scenario.units[unit_1.name].hp = unit_1.hp --atualiza vida do defensor
+        --Verificando se acertou:
+        local acerto = combate.acerto(unit_2, unit_1, weapons, math.random(1,100), math.random(1,100))
+        if acerto == 1 then
+          print("acertou")
+          --Calculando se é crítico:
+          local critical = combate.critical(unit_2, unit_1, weapons, math.random(1,100))
+          --Executando ataque:
+          unit_1.hp = combate.attack(unit_2, unit_1, weapons, critical)
+          scenario.units[unit_1.name].hp = unit_1.hp --atualiza vida do defensor
 
           print(unit_1.name, " tem hp ", unit_1.hp)
           print(unit_2.name, " tem hp ", unit_2.hp)
           print()
-      end
-    end
+        end --if de acerto
+      end --elseif de quem ataca
+    end --if do double attack
 
 
   --print("RESBATALHA")
@@ -81,8 +93,8 @@ local function resultadoBatalha(unit_1, unit_2, weapons, scenario)
   print()
   --print()
   return unit_1, unit_2, scenario
-
 end
+
 
 function SIMULATOR.run(scenario_input)
   math.randomseed(scenario_input.seed) --inicializa gerador de números pseudoaleatórios com semente adequada
