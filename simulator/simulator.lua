@@ -19,7 +19,6 @@ local function resultadoBatalha(unit_1, unit_2, weapons, scenario_input, ataque)
     unit_1.hp = combate.attack(unit_1, unit_2, weapons, critical)
 
   else
-    print()
 
     --[[print(combate.attack(unit_2, unit_1, weapons, critical))
     print(scenario_input.units)
@@ -29,9 +28,6 @@ local function resultadoBatalha(unit_1, unit_2, weapons, scenario_input, ataque)
     print(scenario_input.units.unit_2)
     print(unit_1.name)
     print(unit_2.name)]]
-
-
-    print()
     scenario_input.units[unit_2.name].hp = combate.attack(unit_1, unit_2, weapons, critical)
     unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical)
 end
