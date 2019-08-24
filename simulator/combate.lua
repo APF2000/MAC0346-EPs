@@ -81,7 +81,7 @@ end
 function COMBATE.critical(unit_1, unit_2, weapons, random1)
   --[[ Função que recebe como entrada duas listas de stats de duas unidades em
   combate (unidade 1 ataca e unidade 2 defende); uma lista com as armas e seus
-  atriburos e um número pseudoaleatório (entre 1 e 100).
+  atributos e um número pseudoaleatório (entre 1 e 100).
   Retorna 1 se o ataque da unidade 1 for crítico, ou 0 se não.
   ]]
   local weapon_1 = unit_1.weapon --pega a arma da unidade 1
@@ -91,7 +91,7 @@ function COMBATE.critical(unit_1, unit_2, weapons, random1)
 
   local critical_chance = math.max(0, math.min(100, critical_rate - dodge))
 
-  if random1 <= critical_rate then
+  if random1 <= critical_chance then
     return 1 --ataque foi crítico
   else
     return 0 --ataque não foi crítico
@@ -123,17 +123,15 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
     end
   end
 
-  local critical_bonus = 1 --default é não ser ataque crítico
+  local critical_bonus = 1 --default
   if critical == 1 then --calculando bônus de ataque crítico
     critical_bonus = 3 --há dano crítico
-  else
-    critical_bonus = 1 --não há dano crítico
   end
 
   --Verificando se a arma dá dano físico:
   local armas_fisicas = {"sword", "axe", "lance", "bow"} --armas que dão ataque físico
   local sim_fisico = 0 --flag que é 1 se dano é físico e 0 se é mágico
-  for index, value in ipairs(armas_fisicas) do
+  for value in ipairs(armas_fisicas) do
     if value == weapon_1_type then
       sim_fisico = 1 --dano é físico
     end
@@ -153,10 +151,8 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
     --calcular ataque mágico
 
     oponent_life = math.max(0, oponent_life - magical_damage) --se dano for maior que a vida, não permite vida negativa
-
   end
 
-  sim_fisico = 0 --reseta flag
   return oponent_life --retorna vida do oponente após ataque
 end
 
