@@ -15,6 +15,7 @@ local function resultadoBatalha(unit_1, unit_2, weapons, scenario_input, ataque)
   if(ataque == true) then --se o atacante for a unidade 1
     --print(combate.attack(unit_2, unit_1, weapons, critical))
     --print(scenario_input.units[unit_1].hp)
+    print("atqueeeeeeeeeeeeeeeeeeeeeeeeeee")
     scenario_input.units[unit_1.name].hp = combate.attack(unit_1, unit_2, weapons, critical) --atualiza vida do defensor
     unit_1.hp = combate.attack(unit_1, unit_2, weapons, critical)
 
@@ -28,6 +29,7 @@ local function resultadoBatalha(unit_1, unit_2, weapons, scenario_input, ataque)
     print(scenario_input.units.unit_2)
     print(unit_1.name)
     print(unit_2.name)]]
+    print("defesaaaaaaaaaaaaaa atacando")
     scenario_input.units[unit_2.name].hp = combate.attack(unit_1, unit_2, weapons, critical)
     unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical)
 end
@@ -47,20 +49,21 @@ function SIMULATOR.run(scenario_input)
 
   local count = 1 --contador
 
+  local unit_1 = scenario_input.units[scenario_input.fights[count][1]] --obtem unidade atacante
+  unit_1.name = scenario_input.fights[count][1]
+  -- Novo campo chamado name
+  --print(scenario_input.units[scenario_input.fights[count]])
+  local unit_2 = scenario_input.units[scenario_input.fights[count][2]] --obtem unidade defensora
+  unit_2.name = scenario_input.fights[count][2]
+
   while count <= fight_number do
-    local unit_1 = scenario_input.units[scenario_input.fights[count][1]] --obtem unidade atacante
-    unit_1.name = scenario_input.fights[count][1]
-    -- Novo campo chamado name
-    --print(scenario_input.units[scenario_input.fights[count]])
-    local unit_2 = scenario_input.units[scenario_input.fights[count][2]] --obtem unidade defensora
-    unit_2.name = scenario_input.fights[count][2]
 
     local double_attack = combate.double_attack(unit_1, unit_2, weapons) --flag para indicar se houve segundo ataque e de qual unidade
 
     unit_1, unit_2, scenario_input = resultadoBatalha(unit_1, unit_2, weapons, scenario_input, false)
 
 
-    if scenario_input.units[unit_2.name].hp > 0 then --realiza contra-ataque
+    if scenario_input.units[unit_2.name].hp > 0  then --realiza contra-ataque
 
       unit_1, unit_2, scenario_input = resultadoBatalha(unit_1, unit_2, weapons, scenario_input, true)
 
@@ -74,6 +77,7 @@ function SIMULATOR.run(scenario_input)
           unit_1, unit_2, scenario_input = resultadoBatalha(unit_1, unit_2, weapons, scenario_input, true)
         end
       end
+
     end
     count = count + 1 --incrementa contador
   end

@@ -39,6 +39,7 @@ function COMBATE.double_attack(unit_1, unit_2, weapons)
   local weapon_2 = unit_2.weapon --pega a arma da unidade 2
   local atk_speed_1 = unit_1.spd - math.max(0, weapons[weapon_1].wt - unit_1.str)
   local atk_speed_2 = unit_2.spd - math.max(0, weapons[weapon_2].wt - unit_2.str)
+  print("----------------------------------------------------------------")
   print("atk_speed_1", atk_speed_1)
   print("atk_speed_2", atk_speed_2)
 
@@ -84,9 +85,13 @@ function COMBATE.acerto(unit_1, unit_2, weapons, random1, random2)
 
   local hit_chance = math.max(0, math.min(100, acc - avo)) --cálculo da hit chance do ataque
 
+  print("(random1 + random2)/2", (random1+random2)/2)
   if (random1 + random2)/2 <= hit_chance then
+    print("acertou miseraaaaaaaaaaaaaaaaaaaaaaaaavi")
     return 1 --ataque acertou
+
   end
+  print("errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrou")
   return 0 --ataque errou
 end
 
@@ -177,6 +182,7 @@ function COMBATE.attack(unit_1, unit_2, weapons, critical)
     local physical_power = unit_1.str + (weapons[weapon_1].mt + triangle) * eff_bonus
     local physical_damage = (physical_power - unit_2.def) * critical_bonus --dano físico
 
+    print("str = ", unit_1.str, ", mt = ", weapons[weapon_1].mt, "triangle = ", triangle, "eff_bonus", eff_bonus)
     print("poder e dano fisicos= ", physical_power, physical_damage)
     oponent_life = math.max(0, oponent_life - physical_damage) --se dano for maior que a vida, não permite vida negativa
 
