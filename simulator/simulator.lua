@@ -4,7 +4,7 @@ local combate = require "combate" --chamando módulo de combate
 
 local SIMULATOR = {}
 
-local function resultadoBatalha(unit_1, unit_2, weapons, scenario_input, ataque)
+local function resultadoBatalha(unit_1, unit_2, weapons, scenario, ataque)
 
   acerto = combate.acerto(unit_1, unit_2, weapons, math.random(1, 100), math.random(1, 100)) --flag de acerto do ataque
 
@@ -14,30 +14,38 @@ local function resultadoBatalha(unit_1, unit_2, weapons, scenario_input, ataque)
 
   if(ataque == true) then --se o atacante for a unidade 1
     --print(combate.attack(unit_2, unit_1, weapons, critical))
-    --print(scenario_input.units[unit_1].hp)
+    --print(scenario.units[unit_1].hp)
     print("atqueeeeeeeeeeeeeeeeeeeeeeeeeee")
-    scenario_input.units[unit_1.name].hp = combate.attack(unit_1, unit_2, weapons, critical) --atualiza vida do defensor
-    unit_1.hp = combate.attack(unit_1, unit_2, weapons, critical)
+    unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical)
+    scenario.units[unit_2.name].hp = unit_2.hp --atualiza vida do defensor
+
+
+    if(combate.double_attack(unit_1, unit_2, scenario.weapons)) then
+      unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical)
+      scenario.units[unit_2.name].hp = unit_2.hp --atualiza vida do defensor
+    end
 
   else
-
-    --[[print(combate.attack(unit_2, unit_1, weapons, critical))
-    print(scenario_input.units)
-    print(scenario_input.units["Brigand"])
-    print(scenario_input.units[unit_2])
-    print(scenario_input.units[unit_2])
-    print(scenario_input.units.unit_2)
-    print(unit_1.name)
-    print(unit_2.name)]]
     print("defesaaaaaaaaaaaaaa atacando")
-    scenario_input.units[unit_2.name].hp = combate.attack(unit_1, unit_2, weapons, critical)
-    unit_2.hp = combate.attack(unit_1, unit_2, weapons, critical)
-end
+    unit_1.hp = combate.attack(unit_2, unit_1, weapons, critical)
+    scenario.units[unit_1.name].hp = unit_1.hp
+
+    if(combate.double_attack(unit_2, unit_1, scenario.weapons)) then
+      unit_1.hp = combate.attack(unit_2, unit_1, weapons, critical)
+      scenario.units[unit_1.name].hp = unit_1.hp --atualiza vida do defensor
+    end
+
+  end
+
   print("RESBATALHA")
   print(unit_1.name, " tem hp ", unit_1.hp)
   print(unit_2.name, " tem hp ", unit_2.hp)
   print()
-  return unit_1, unit_2, scenario_input
+  if(unit_1.hp > 0 and unit_2.hp > 0) then
+    return unit_1, unit_2, scenario
+  else
+    return unit_1, unit_2, scenario
+  end
 end
 
 function SIMULATOR.run(scenario_input)
@@ -45,18 +53,31 @@ function SIMULATOR.run(scenario_input)
 
   local weapons = scenario_input.weapons --lista de armas do cenário
 
-  local fight_number = table.getn(scenario_input.fights) --dá número de lutas a serem realizadas neste cenário
+  local fights_number = table.getn(scenario_input.fights) --dá número de lutas a serem realizadas neste cenário
 
-  local count = 1 --contador
+  local count = 0 --contador
 
-  local unit_1 = scenario_input.units[scenario_input.fights[count][1]] --obtem unidade atacante
-  unit_1.name = scenario_input.fights[count][1]
-  -- Novo campo chamado name
-  --print(scenario_input.units[scenario_input.fights[count]])
-  local unit_2 = scenario_input.units[scenario_input.fights[count][2]] --obtem unidade defensora
-  unit_2.name = scenario_input.fights[count][2]
+  while count < fights_number do
+    count = count + 1
 
-  while count <= fight_number do
+    print("----------------------------------------")
+
+    local unit_1 = scenario_input.units[scenario_input.fights[count][1]] --obtem unidade atacante
+    unit_1.name = scenario_input.fights[count][1]
+    -- Novo campo chamado name
+    --print(scenario_input.units[scenario_input.fights[count]])
+    local unit_2 = scenario_input.units[scenario_input.fights[count][2]] --obtem unidade defensora
+    unit_2.name = scenario_input.fights[count][2]
+
+    -- Atacante
+    unit_1, unit_2, scenario_input = resultadoBatalha(unit_1, unit_2, weapons, scenario_input, true)
+
+    -- Defensor
+    unit_1, unit_2, scenario_input = resultadoBatalha(unit_1, unit_2, weapons, scenario_input, false)
+
+  end
+
+  --[[while count <= fights_number and unit_1.hp > 0 and unit_2.hp > 0 do
 
     local double_attack = combate.double_attack(unit_1, unit_2, weapons) --flag para indicar se houve segundo ataque e de qual unidade
 
@@ -80,7 +101,7 @@ function SIMULATOR.run(scenario_input)
 
     end
     count = count + 1 --incrementa contador
-  end
+  end]]
   local output = scenario_input.units --a saída será apenas os stats das unidades
   return output --Retornar output finalizado
 end

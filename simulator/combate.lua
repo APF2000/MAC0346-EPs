@@ -50,12 +50,10 @@ function COMBATE.double_attack(unit_1, unit_2, weapons)
 
   if math.abs(atk_speed_1 - atk_speed_2) >= 4 then
     if atk_speed_1 > atk_speed_2 then
-      return 1 --Unidade 1 realizará um segundo ataque
-    else
-      return 2 --Unidade 2 realizará um segundo ataque
+      return true --Unidade 1 realizará um segundo ataque
     end
   end
-  return 0 --Se não entrar em nenhum dos casos, não houve double attack
+  return false --Se não entrar em nenhum dos casos, não houve double attack
 end
 
 
