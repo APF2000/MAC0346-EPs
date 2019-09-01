@@ -1,9 +1,8 @@
 local AUXLOADER = require "auxLoader"
-local path = arg[2]
-path = string.format("%s.lua", path)
-path = AUXLOADER.format(path)
-
 local MATRIX = require "matrix"
+
+local path = arg[2]
+path = string.format("maps/%s.lua", path)
 
 local chunck = love.filesystem.load(path)
 local MAP = chunck()
@@ -26,12 +25,9 @@ function love.load()
     blocks[i] = love.graphics.newQuad(x, y, w, h, img:getDimensions())
   end
   --------------------------------------------------------------
-  love.filesystem.setRequirePath(path)
+  --love.filesystem.setRequirePath(path)
+  --love.window.setFullscreen(true)
 
-  --local layer = MAP.layers[1]
-  --local block = layer.data[1]
-  --local aux = AUXLOADER.format()
-  --image = love.graphics.newImage(aux)
 end
 
 function love.draw()
@@ -46,6 +42,19 @@ function love.draw()
 
   --love.graphics.draw(image, 0, 0)
 
-  love.graphics.draw(img, blocks[100], 50, 50)
+  local layers = MAP.layers
+  for i, layer in ipairs(layers) do
+    print("layer = ", layer, ", i = ", i)
+    if(layer.type == "tilelayer") then
+      for j, data in ipairs(layer.data) do
+        print("data = ", data, ", j = ", j)
+        if(data ~= 0) then
+          love.graphics.draw(img, blocks[data], 0, 0)
+        end
+      end
+    else
+      print("diferente")
+    end
+  end
 
 end
