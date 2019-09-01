@@ -1,12 +1,8 @@
-local LOADER = require "auxLoader"
-
-local defaultPath = love.filesystem.getRequirePath()
 local path = arg[2]
-path = LOADER.addPath(path)
-love.filesystem.setRequirePath(path)
+path = string.format("maps/%s.lua", path)
 
-local MAP = require (path)
-
+local chunck = love.filesystem.load(path)
+local MAP = chunck()
 
 function love.draw()
 
