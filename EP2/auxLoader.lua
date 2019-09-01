@@ -4,11 +4,11 @@ function AUXLOADER.format(name)
   return string.format("maps/%s", name)
 end
 
-function AUXLOADER.blocks(MAP)
+function AUXLOADER.blocks(map)
   local index = 0
   local dimMax = {200, 200}
 
-  local tilesets = MAP.tilesets[1]
+  local tilesets = map.tilesets[1]
 
   local columns = tilesets.columns
   local tileH = tilesets.tileheight
