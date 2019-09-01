@@ -1,15 +1,19 @@
+local AUXLOADER = require "auxLoader"
 local path = arg[2]
-path = string.format("maps/maps/%s.lua", path)
-
-love.filesystem.setRequirePath(path)
-print(love.filesystem.getRequirePath())
+path = AUXLOADER.formatLua(path)
 
 local chunck = love.filesystem.load(path)
 local MAP = chunck()
 
 
 function love.load()
-  --image = love.graphics.newImage(MAP.tilesets[1].image)
+  love.filesystem.setRequirePath(path)
+  print(love.filesystem.getRequirePath())
+
+  local aux = AUXLOADER.formatImage(MAP.tilesets[1].image)
+  --local image = love.filesystem.load("tilesheet_complete.png")
+
+  image = love.graphics.newImage(aux)
 end
 
 function love.draw()
@@ -20,6 +24,6 @@ function love.draw()
 
   love.graphics.print(MAP.version, 100, 100)
 
-  --love.graphics.draw(image, 0, 0)
+  love.graphics.draw(image, 0, 0)
 
 end

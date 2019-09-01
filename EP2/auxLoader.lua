@@ -1,8 +1,11 @@
 local LOADER = {}
 
-function LOADER.addPath(name)
-  local path = string.format("maps/%s.lua", name)
-  return path
+function LOADER.formatLua(name)
+  return string.format("maps/%s.lua", name)
+end
+
+function LOADER.formatImage(name)
+  return string.format("maps/%s", name)
 end
 
 function LOADER.load(path)
