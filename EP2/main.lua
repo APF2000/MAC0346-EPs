@@ -8,35 +8,23 @@ local MATRIX = require "matrix"
 local chunck = love.filesystem.load(path)
 local MAP = chunck()
 
-local blockImg = {}
+local blocks = {}
 
 function love.load()
   ---------------------------------------------------------
-  img = love.graphics.newImage("maps/tilesheet_complete.png")
-
-  print("MAP = ", MAP)
-  local index = 5
-
   local tilesets = MAP.tilesets[1]
+  local format = string.format("maps/%s", tilesets.image)
+  img = love.graphics.newImage(format)
 
-  local columns = tilesets.columns
-  local tileH = tilesets.tileheight
-  local tileW = tilesets.tilewidth
+  local qtdeTiles = tilesets.tilecount
 
-  local startX = 0
-  local startY = 0
+  for i = 1, qtdeTiles do
+    local index = i - 1
 
-  if(index / columns <= 5) then
-    startX = tileW * (index % columns)
-    startY = tileH * math.floor(index / columns)
-  else
-    local newIndex = index - columns*5
-    startX = tileW * ((newIndex) % 10)
-    startY = tileH * math.floor((newIndex) / 10 + 5)
+    x, y, w, h = AUXLOADER.result(MAP, index)
+
+    blocks[i] = love.graphics.newQuad(x, y, w, h, img:getDimensions())
   end
-
-  blockImg = love.graphics.newQuad(startX, startY, tileW, tileH, img:getDimensions())
-
   --------------------------------------------------------------
   love.filesystem.setRequirePath(path)
 
@@ -58,6 +46,6 @@ function love.draw()
 
   --love.graphics.draw(image, 0, 0)
 
-  love.graphics.draw(img, blockImg, 50, 50)
+  love.graphics.draw(img, blocks[100], 50, 50)
 
 end
