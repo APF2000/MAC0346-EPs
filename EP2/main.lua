@@ -1,16 +1,20 @@
-local LOADER = require "loader"
-local mapPath = ...
+local LOADER = require "auxLoader"
 
-LOADER.addPath(mapPath)
-print(package.path)
-local MAP = require "maps/test.lua"
+local defaultPath = love.filesystem.getRequirePath()
+local path = arg[2]
+path = LOADER.addPath(path)
+love.filesystem.setRequirePath(path)
 
-print(MAP)
-print(MAP.tilesets[1].name)
-print(MAP.version)
+local MAP = require (path)
 
---[[for i, obj in ipairs(MAP) do
-  print(MAP[i])
-end]]
 
---local scenario = LOADER.
+function love.draw()
+
+  love.graphics.setNewFont(20)
+
+  love.graphics.print("Hello world!", 400, 300)
+
+  love.graphics.print(MAP.version, 100, 100)
+
+
+end

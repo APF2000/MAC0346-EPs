@@ -1,7 +1,8 @@
 local LOADER = {}
 
-function LOADER.addPath(path)
-  package.path = string.format("maps/%s.lua", path)
+function LOADER.addPath(name)
+  local path = string.format("maps/%s.lua", name)
+  return path
 end
 
 function LOADER.load(path)
