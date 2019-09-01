@@ -42,15 +42,23 @@ function love.draw()
 
   --love.graphics.draw(image, 0, 0)
 
+  local x, y, z = 0, 0, 0
+  local w, h = MAP.width, MAP.height
   local layers = MAP.layers
+
   for i, layer in ipairs(layers) do
     print("layer = ", layer, ", i = ", i)
+
     if(layer.type == "tilelayer") then
-      for j, data in ipairs(layer.data) do
+      for j = 1, w * h - 1 do
+
         print("data = ", data, ", j = ", j)
+        local data = layer.data[j]
         if(data ~= 0) then
           love.graphics.draw(img, blocks[data], 0, 0)
         end
+
+
       end
     else
       print("diferente")
