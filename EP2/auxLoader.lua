@@ -1,12 +1,12 @@
-local LOADER = {}
+local AUXLOADER = {}
 
-function LOADER.format(name)
+function AUXLOADER.format(name)
   return string.format("maps/%s", name)
 end
 
-function LOADER.block(index, MAP)
-  
-  local dimMax = img:getDimensions()
+function AUXLOADER.blocks(MAP)
+  local index = 0
+  local dimMax = {200, 200}
 
   local tilesets = MAP.tilesets[1]
 
@@ -16,13 +16,23 @@ function LOADER.block(index, MAP)
 
   local startX = 0
   local startY = 0
+
+  if(index / columns <= 5) then
+    startX = tileW * (index % columns)
+    startY = tileH * (index / columns)
+  else
+    local newIndex = index - columns*5
+    startX = tileW * ((newIndex) % 10)
+    startY = tileH * ((newIndex) / 10 + 5)
+  end
+
   return love.graphics.newQuad(startX, startY, tileW, tileH, dimMax)
 end
 
-function LOADER.load(path)
+function AUXLOADER.load(path)
   local chunk = assert(loadfile(path))
   setfenv(chunk, {})
   return chunk()
 end
 
-return LOADER
+return AUXLOADER

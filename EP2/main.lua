@@ -1,20 +1,20 @@
-local AUXLOADER = love.filesystem.load("auxLoader.lua")
-AUXLOADER = AUXLOADER()
+local AUXLOADER = require "auxLoader"
 local path = arg[2]
 path = string.format("%s.lua", path)
 path = AUXLOADER.format(path)
 
-local MATRIX = love.filesystem.load("matrix.lua")
-MATRIX = MATRIX()
+local MATRIX = require "matrix"
 
 local chunck = love.filesystem.load(path)
 local MAP = chunck()
 
+local blockImg = {}
 
 function love.load()
   img = love.graphics.newImage("maps/tilesheet_complete.png")
 
-  blockImg = AUXLOADER.block(0, MAP)
+  print("MAP = ", MAP)
+  blockImg = AUXLOADER.blocks(MAP)
 
   love.filesystem.setRequirePath(path)
 
