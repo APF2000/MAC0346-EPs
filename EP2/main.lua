@@ -26,11 +26,9 @@ function love.load()
 
     blocks[i] = love.graphics.newQuad(x, y, w, h, img:getDimensions())
   end
-  --------------------------------------------------------------
-  --love.filesystem.setRequirePath(path)
-  --love.window.setFullscreen(true)
-  loadTiledMap(format)
 end
+
+local counter = 0
 
 function love.draw()
 
@@ -40,33 +38,48 @@ function love.draw()
 
   love.graphics.setBackgroundColor(MAP.backgroundcolor)
 
-  --love.graphics.print(MAP.version, 100, 100)
 
-  --love.graphics.draw(image, 0, 0)
+  -- Este pedaco de codigo sera executad varias vezes
+  -- A funcao draw e executada varias vezes
+
+  --[[x, y, z = 1, 2, 20
+  local transf = MATRIX.linearTransform(x, y, z, 111, 64)
+  print("transfxx=", transf[1][1], ", transfyy=", transf[2][1])
+  love.graphics.draw(img, blocks[10], transf[1][1], transf[2][1])
+  love.graphics.draw(img, blocks[100], 131, 20)
+  love.graphics.draw(img, blocks[50], 300, 20)]]
 
   local x, y, z = 0, 0, 0
   local w, h = MAP.width, MAP.height
   local layers = MAP.layers
 
-  --[[for i, layer in ipairs(layers) do
-    print("layer = ", layer, ", i = ", i)
+  --for i, layer in ipairs(layers) do
+    --print("layer = ", layer, ", i = ", i)
 
-    if(layer.type == "tilelayer") then
-      for j = 1, w * h - 1 do
+    if(layers[1].type == "tilelayer") then
 
-        print("data = ", data, ", j = ", j)
-        local data = layer.data[j]
-        if(data ~= 0) then
-          love.graphics.draw(img, blocks[data], 0, 0)
+
+        x, y, z = 0, 0, 0
+      for i = 1, w do
+        x = 0
+        for j = 1, h do
+          local data = layers[1].data[j]
+          print("data = ", data, ", j = ", j)
+          if(data ~= 0) then
+            local transf = MATRIX.linearTransform(x,y,z,111,64)
+            love.graphics.draw(img, blocks[data], transf[1][1], transf[2][1])
+          end
+          x = x + 1
         end
 
-
+        y = y + 1
       end
     else
       print("diferente")
     end
-  end]]
+  --end
 
+  loadTiledMap(format)
 end
 
 
