@@ -25,10 +25,10 @@ function love.load()
     x, y, w, h = AUXLOADER.result(MAP, index)
 
     blocks[i] = love.graphics.newQuad(x, y, w, h, img:getDimensions())
+    x, y = img:getDimensions()
+    --print("dim=", x, y)
   end
 end
-
-local counter = 0
 
 function love.draw()
 
@@ -36,54 +36,62 @@ function love.draw()
 
   love.graphics.print("Hello world!", 400, 300)
 
-  love.graphics.setBackgroundColor(MAP.backgroundcolor)
-
-
-  -- Este pedaco de codigo sera executad varias vezes
   -- A funcao draw e executada varias vezes
 
   --[[x, y, z = 1, 2, 20
   local transf = MATRIX.linearTransform(x, y, z, 111, 64)
-  print("transfxx=", transf[1][1], ", transfyy=", transf[2][1])
+  --print("transfxx=", transf[1][1], ", transfyy=", transf[2][1])
   love.graphics.draw(img, blocks[10], transf[1][1], transf[2][1])
   love.graphics.draw(img, blocks[100], 131, 20)
   love.graphics.draw(img, blocks[50], 300, 20)]]
 
+  --love.window.setFullscreen(true)
+  love.graphics.translate(400, 200)
+  love.graphics.scale(0.3, 0.3)
+  render()
+
+  --loadTiledMap(format)
+end
+
+function render()
+
+  love.graphics.setBackgroundColor(MAP.backgroundcolor)
   local x, y, z = 0, 0, 0
   local w, h = MAP.width, MAP.height
   local layers = MAP.layers
+  local tilewidth, tileheight = MAP.tilewidth, MAP.tileheight
 
-  --for i, layer in ipairs(layers) do
-    --print("layer = ", layer, ", i = ", i)
-
-    if(layers[1].type == "tilelayer") then
-
-
-        x, y, z = 0, 0, 0
+  troll = 0
+  for k, layer in ipairs(layers) do
+    if troll >= 2 then break end
+    troll = troll + 1
+    --print("layer = ", layer, ", k = ", k)
+    x, y = 0, 0
+    if(layer.type == "tilelayer") then
+      x, y, z = 0, 0, layer.offsety
       for i = 1, w do
         x = 0
         for j = 1, h do
-          local data = layers[1].data[j]
-          print("data = ", data, ", j = ", j)
+          local data = layer.data[j]
+          if troll >= 6 then print("data = ", data, ", j = ", j, ", i = ", i) end
+
           if(data ~= 0) then
-            local transf = MATRIX.linearTransform(x,y,z,111,64)
+            local transf = MATRIX.linearTransform(x,y,z,tilewidth,tileheight)
             love.graphics.draw(img, blocks[data], transf[1][1], transf[2][1])
           end
           x = x + 1
         end
-
         y = y + 1
       end
     else
-      print("diferente")
+      --print("diferente")
     end
-  --end
+  end
 
-  loadTiledMap(format)
 end
 
 
-function loadTiledMap(path)
+--[[function loadTiledMap(path)
   for y = 0, (tilesets.imageheight / tilesets.tileheight) - 1 do
     for x = 0, (tilesets.imagewidth / tilesets.tilewidth) - 1 do
       local quad = love.graphics.newQuad(
@@ -125,3 +133,4 @@ function loadTiledMap(path)
   end
 
 end
+]]
