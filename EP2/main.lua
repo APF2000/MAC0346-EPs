@@ -63,17 +63,17 @@ function render()
 
   troll = 0
   for k, layer in ipairs(layers) do
-    if troll >= 2 then break end
+    --if troll >= 3 then break end
     troll = troll + 1
     --print("layer = ", layer, ", k = ", k)
     x, y = 0, 0
     if(layer.type == "tilelayer") then
       x, y, z = 0, 0, layer.offsety
-      for i = 1, w do
+      for i = 1, h do
         x = 0
-        for j = 1, h do
-          local data = layer.data[j]
-          if troll >= 6 then print("data = ", data, ", j = ", j, ", i = ", i) end
+        for j = 1, w do
+          local data = layer.data[(i - 1) * w + j]
+          if troll == 2 then print("data = ", data, ", j = ", j, ", i = ", i) end
 
           if(data ~= 0) then
             local transf = MATRIX.linearTransform(x,y,z,tilewidth,tileheight)
