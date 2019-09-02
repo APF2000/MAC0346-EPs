@@ -6,12 +6,14 @@ path = string.format("maps/%s.lua", path)
 
 local chunck = love.filesystem.load(path)
 local MAP = chunck()
+MAP.quads = {}
 
 local blocks = {}
+local tilesets = MAP.tilesets[1]
 
 function love.load()
   ---------------------------------------------------------
-  local tilesets = MAP.tilesets[1]
+
   local format = string.format("maps/%s", tilesets.image)
   img = love.graphics.newImage(format)
 
@@ -27,7 +29,7 @@ function love.load()
   --------------------------------------------------------------
   --love.filesystem.setRequirePath(path)
   --love.window.setFullscreen(true)
-
+  loadTiledMap(format)
 end
 
 function love.draw()
@@ -46,7 +48,7 @@ function love.draw()
   local w, h = MAP.width, MAP.height
   local layers = MAP.layers
 
-  for i, layer in ipairs(layers) do
+  --[[for i, layer in ipairs(layers) do
     print("layer = ", layer, ", i = ", i)
 
     if(layer.type == "tilelayer") then
@@ -62,6 +64,50 @@ function love.draw()
       end
     else
       print("diferente")
+    end
+  end]]
+
+end
+
+
+function loadTiledMap(path)
+  for y = 0, (tilesets.imageheight / tilesets.tileheight) - 1 do
+    for x = 0, (tilesets.imagewidth / tilesets.tilewidth) - 1 do
+      local quad = love.graphics.newQuad(
+        x * tilesets.tilewidth,
+        y * tilesets.tileheight,
+        tilesets.tilewidth,
+        tilesets.tileheight,
+        tilesets.imagewidth,
+        tilesets.imageheight
+      )
+      table.insert(MAP.quads, quad)
+    end
+  end
+
+  function MAP:draw()
+    for i, layer in ipairs(sel.layers) do
+      for y = 0, layer.height - 1 do
+        for x = 0, layer.width - 1 do
+          local index = (x + y * layer.width) + 1
+          local tid = layer.data[index]
+
+          if tid ~= 0 then
+            local quad = self.quads(tid)
+            local xx = x * self.tilesets[1].tilewidth
+            local yy = y * self.tilesets[1].tileheight
+
+
+            love.graphics.draw(
+              img,
+              quad,
+              xx,
+              yy
+            )
+          end
+
+        end
+      end
     end
   end
 
