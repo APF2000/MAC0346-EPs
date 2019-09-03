@@ -20,10 +20,10 @@ function AUXLOADER.result(MAP, index)
   return startX, startY, tileW, tileH
 end
 
-function AUXLOADER.load(path)
+--[[function AUXLOADER.load(path)
   local chunk = assert(loadfile(path))
   setfenv(chunk, {})
   return chunk()
-end
+end]]
 
 return AUXLOADER

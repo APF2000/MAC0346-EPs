@@ -12,7 +12,6 @@ local blocks = {}
 local tilesets = MAP.tilesets[1]
 
 function love.load()
-  ---------------------------------------------------------
 
   local format = string.format("maps/%s", tilesets.image)
   img = love.graphics.newImage(format)
@@ -26,31 +25,16 @@ function love.load()
 
     blocks[i] = love.graphics.newQuad(x, y, w, h, img:getDimensions())
     x, y = img:getDimensions()
-    --print("dim=", x, y)
+
   end
 end
 
 function love.draw()
 
-  love.graphics.setNewFont(20)
-
-  love.graphics.print("Hello world!", 400, 300)
-
-  -- A funcao draw e executada varias vezes
-
-  --[[x, y, z = 1, 2, 20
-  local transf = MATRIX.linearTransform(x, y, z, 111, 64)
-  --print("transfxx=", transf[1][1], ", transfyy=", transf[2][1])
-  love.graphics.draw(img, blocks[10], transf[1][1], transf[2][1])
-  love.graphics.draw(img, blocks[100], 131, 20)
-  love.graphics.draw(img, blocks[50], 300, 20)]]
-
-  --love.window.setFullscreen(true)
-  love.graphics.translate(400, 200)
-  love.graphics.scale(0.3, 0.3)
+  love.graphics.translate(300, 150)
+  love.graphics.scale(0.25, 0.25)
   render()
 
-  --loadTiledMap(format)
 end
 
 function render()
@@ -61,19 +45,15 @@ function render()
   local layers = MAP.layers
   local tilewidth, tileheight = MAP.tilewidth, MAP.tileheight
 
-  troll = 0
   for k, layer in ipairs(layers) do
-    --if troll >= 3 then break end
-    troll = troll + 1
-    --print("layer = ", layer, ", k = ", k)
-    x, y = 0, 0
+
     if(layer.type == "tilelayer") then
       x, y, z = 0, 0, layer.offsety
       for i = 1, h do
         x = 0
         for j = 1, w do
+
           local data = layer.data[(i - 1) * w + j]
-          if troll == 2 then print("data = ", data, ", j = ", j, ", i = ", i) end
 
           if(data ~= 0) then
             local transf = MATRIX.linearTransform(x,y,z,tilewidth,tileheight)
@@ -83,54 +63,44 @@ function render()
         end
         y = y + 1
       end
-    else
+
+    else -- layer.type == "objectgroup"
       --print("diferente")
-    end
-  end
+      for i, obj in ipairs(layer.objects) do
 
-end
+        local x = math.floor(obj.x  / obj.width)
+        local y = math.floor(obj.y / obj.height)
 
+        if(obj.type == "sprite" and obj.visible) then
 
---[[function loadTiledMap(path)
-  for y = 0, (tilesets.imageheight / tilesets.tileheight) - 1 do
-    for x = 0, (tilesets.imagewidth / tilesets.tilewidth) - 1 do
-      local quad = love.graphics.newQuad(
-        x * tilesets.tilewidth,
-        y * tilesets.tileheight,
-        tilesets.tilewidth,
-        tilesets.tileheight,
-        tilesets.imagewidth,
-        tilesets.imageheight
-      )
-      table.insert(MAP.quads, quad)
-    end
-  end
-
-  function MAP:draw()
-    for i, layer in ipairs(sel.layers) do
-      for y = 0, layer.height - 1 do
-        for x = 0, layer.width - 1 do
-          local index = (x + y * layer.width) + 1
-          local tid = layer.data[index]
-
-          if tid ~= 0 then
-            local quad = self.quads(tid)
-            local xx = x * self.tilesets[1].tilewidth
-            local yy = y * self.tilesets[1].tileheight
-
-
-            love.graphics.draw(
-              img,
-              quad,
-              xx,
-              yy
-            )
+          for frame_token in obj.properties.frames:gmatch("%d+") do
+            local frame = tonumber(frame_token)
           end
 
+          --print("frame=", frame)
+          local transf = MATRIX.linearTransform(x,y,z,tilewidth,tileheight)
+
+          love.graphics.draw(img, blocks[148], transf[1][1], transf[2][1])
+
+          print("z=", z, ", name=", obj.name)
         end
       end
+      --[[
+      x=	2	,y=	5	, z=	-64
+      xx=	-166.5	,yy= 	160
+      z=	-64	, name=	caverman
+
+      x=	3	,y=	10	, z=	-64
+      xx=	-388.5	,yy= 	352
+      z=	-64	, name=	turtle-1
+
+      x=	5	,y=	1	, z=	-64
+      xx=	222	,yy= 	128
+      z=	-64	, name=	caverman
+
+      ]]
+
     end
   end
 
 end
-]]
