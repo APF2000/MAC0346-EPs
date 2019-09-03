@@ -9,7 +9,9 @@ local MAP = chunck()
 MAP.quads = {}
 
 local blocks = {}
+local sprites = {}
 local tilesets = MAP.tilesets[1]
+local layers = tilesets.layers
 
 function love.load()
 
@@ -21,11 +23,26 @@ function love.load()
   for i = 1, qtdeTiles do
     local index = i - 1
 
-    x, y, w, h = AUXLOADER.result(MAP, index)
+    x, y, w, h = AUXLOADER.blocks(MAP, index)
 
     blocks[i] = love.graphics.newQuad(x, y, w, h, img:getDimensions())
     x, y = img:getDimensions()
+  end
 
+  for i = 1, layer in ipairs(layers) do
+    if(layer.type == "objectgroup") then
+      for j = 1, obj in ipairs(layer.objects) do
+        if(obj.type == "sprite") then
+
+          local index = i - 1
+
+          x, y, w, h = AUXLOADER.blocks(MAP, index)
+
+          blocks[i] = love.graphics.newQuad(x, y, w, h, img:getDimensions())
+          x, y = img:getDimensions()
+        end
+      end
+    end
   end
 end
 
@@ -42,7 +59,6 @@ function render()
   love.graphics.setBackgroundColor(MAP.backgroundcolor)
   local x, y, z = 0, 0, 0
   local w, h = MAP.width, MAP.height
-  local layers = MAP.layers
   local tilewidth, tileheight = MAP.tilewidth, MAP.tileheight
 
   for k, layer in ipairs(layers) do
@@ -64,8 +80,7 @@ function render()
         y = y + 1
       end
 
-    else -- layer.type == "objectgroup"
-      --print("diferente")
+    else
       for i, obj in ipairs(layer.objects) do
 
         local x = math.floor(obj.x  / obj.width)
@@ -82,23 +97,8 @@ function render()
 
           love.graphics.draw(img, blocks[148], transf[1][1], transf[2][1])
 
-          print("z=", z, ", name=", obj.name)
         end
       end
-      --[[
-      x=	2	,y=	5	, z=	-64
-      xx=	-166.5	,yy= 	160
-      z=	-64	, name=	caverman
-
-      x=	3	,y=	10	, z=	-64
-      xx=	-388.5	,yy= 	352
-      z=	-64	, name=	turtle-1
-
-      x=	5	,y=	1	, z=	-64
-      xx=	222	,yy= 	128
-      z=	-64	, name=	caverman
-
-      ]]
 
     end
   end

@@ -4,7 +4,7 @@ function AUXLOADER.format(name)
   return string.format("maps/%s", name)
 end
 
-function AUXLOADER.result(MAP, index)
+function AUXLOADER.blocks(MAP, index)
   local tilesets = MAP.tilesets[1]
 
   local columns = tilesets.columns
@@ -20,10 +20,8 @@ function AUXLOADER.result(MAP, index)
   return startX, startY, tileW, tileH
 end
 
---[[function AUXLOADER.load(path)
-  local chunk = assert(loadfile(path))
-  setfenv(chunk, {})
-  return chunk()
-end]]
+function AUXLOADER.sprites(MAP)
+
+end
 
 return AUXLOADER
