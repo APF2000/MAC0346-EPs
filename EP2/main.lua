@@ -33,8 +33,8 @@ function love.load()
   --[[print("sprites", sprites["caverman"])
   print("sprites", sprites["caverman"][1])]]
 
-  print("imgsprites", imgSprites)
-  print("imgblocks", imgBlocks)
+  --print("imgsprites", imgSprites)
+  --print("imgblocks", imgBlocks)
 
   for i=1, 1 do end
   --sprites[i] = love.graphics.newQuad(x, y, w, h, imgSprite:getDimensions())
@@ -43,28 +43,23 @@ end
 
 function love.draw()
 
-  love.graphics.translate(300, 150)
-  love.graphics.scale(0.3, 0.3)
+  love.graphics.translate(300, 100)
+  love.graphics.scale(0.6, 0.6)
   render()
-  local cav = sprites["caverman"]
-  --[[
-  love.graphics.draw(cav.img, cav[1], 0, 0)
-  love.graphics.draw(cav.img, cav[2], 100, 0)
-  love.graphics.draw(cav.img, cav[3], 200, 0)
-  love.graphics.draw(cav.img, cav[4], 300, 0)
-  love.graphics.draw(cav.img, cav[5], 0, 100)
-  love.graphics.draw(cav.img, cav[6], 100, 100)
-  love.graphics.draw(cav.img, cav[7], 200, 100)
-  love.graphics.draw(cav.img, cav[8], 300, 100)
-  love.graphics.draw(cav.img, cav[9], 400, 100)
-  love.graphics.draw(cav.img, cav[10], 500, 100)
-  love.graphics.draw(cav.img, cav[11], 600, 100)
-  love.graphics.draw(cav.img, cav[30], 600, 200)]]
-
 
 end
 
+local frameCounter = 1
+local FPS = 1
+function love.update(dt)
+  if dt > 1 / FPS then
+    frameCounter = frameCounter % FPS + 1
+  end
+end
+
 function render()
+
+  print("\ntaoquei")
 
   love.graphics.setBackgroundColor(MAP.backgroundcolor)
   local x, y, z = 0, 0, 0
@@ -98,18 +93,26 @@ function render()
 
         if(obj.type == "sprite" and obj.visible) then
 
-          for frame_token in obj.properties.frames:gmatch("%d+") do
-            local frame = tonumber(frame_token)
-          end
-
-          --print("frame=", frame)
           local transf = MATRIX.linearTransform(x,y,z,tilewidth,tileheight)
 
           local spr = sprites[obj.name]
+          local frameVector = obj.properties.frames
+          local total = frameVector.total
+          local current = frameVector.current % total + 1
+          local frameToSet = frameVector[current]
 
-          local pos = 1
-          if(obj.name == "caverman") then pos = 30 end
-          love.graphics.draw(spr.img, spr[pos], transf[1][1], transf[2][1])
+          print("\ntotal - name", total, obj.name)
+          print("current", current)
+          print('frameToSet', frameToSet)
+
+          love.graphics.draw(spr.img, spr[frameToSet], transf[1][1], transf[2][1])
+
+          if frameCounter == FPS then
+            frameVector.current = current % total
+
+            print("framevec=", frameVector)
+            print("current=", frameVector.current)
+          end
 
         end
       end

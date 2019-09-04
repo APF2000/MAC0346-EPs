@@ -20,6 +20,18 @@ function AUXLOADER.blocks(MAP, index)
   return startX, startY, tileW, tileH
 end
 
+local function framesTable(obj)
+  local i = 1
+  local frames = {}
+  for frame_token in obj.properties.frames:gmatch("%d+") do
+    frames[i] = tonumber(frame_token)
+    i = i + 1
+  end
+  frames["current"] = 1
+  frames["total"] = i - 1
+  obj.properties.frames = frames
+end
+
 function AUXLOADER.sprites(MAP)
   local layers = MAP.layers
   local x, y, w, h = 0, 0, 0, 0
@@ -29,13 +41,17 @@ function AUXLOADER.sprites(MAP)
     if(layer.type == "objectgroup") then
 
       for j, obj in ipairs(layer.objects) do
-        if(obj.type == "sprite") and (spr[obj.name] == nil) then
+        if(obj.type == "sprite") then
+
+          --Trocando os frames de string para table
+          framesTable(obj)
+
           local prop = obj.properties
 
           local format = AUXLOADER.format("chars", obj.name, ".png")
 
           local img = love.graphics.newImage(format)
-          print("img", img)
+          --print("img", img)
           local columns = prop.columns
           local rows = prop.rows
 
@@ -46,24 +62,25 @@ function AUXLOADER.sprites(MAP)
           local offsetx = prop.offsetx
           local offsety = prop.offsety
 
+          if spr[obj.name] == nil then
             spr[obj.name] = {}
 
             for k = 1, columns * rows do
               x = w * (k % columns)
               y = h * math.floor(k / columns)
-              print("x, y", x, y)
+              --print("x, y", x, y)
 
               spr[obj.name][k] = love.graphics.newQuad(x, y, w, h, dimw, dimh)
             end
             spr[obj.name].img = img
-
+          end
         end
       end
     end
   end
 
-  print("imgreturn", img)
-  print()
+  --print("imgreturn", img)
+  --print()
   return spr, img
 end
 
