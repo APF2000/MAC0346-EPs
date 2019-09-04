@@ -29,7 +29,7 @@ function AUXLOADER.sprites(MAP)
     if(layer.type == "objectgroup") then
 
       for j, obj in ipairs(layer.objects) do
-        if(obj.type == "sprite") then
+        if(obj.type == "sprite") and (spr[obj.name] == nil) then
           local prop = obj.properties
 
           local format = AUXLOADER.format("chars", obj.name, ".png")
@@ -46,7 +46,7 @@ function AUXLOADER.sprites(MAP)
           local offsetx = prop.offsetx
           local offsety = prop.offsety
 
-          if(spr[obj.name] == nil) then
+
             spr[obj.name] = {}
 
             for k = 1, columns * rows do
@@ -54,6 +54,7 @@ function AUXLOADER.sprites(MAP)
               y = h * math.floor(k / columns)
 
               spr[obj.name][k] = love.graphics.newQuad(x, y, w, h, img:getDimensions())
+              spr[obj.name].img = img
 
               if k == 1 and obj.name == "caverman" then
                 print("k=", k)
@@ -65,13 +66,15 @@ function AUXLOADER.sprites(MAP)
               --love.graphics.draw(img, spr[obj.name][k], 0, 0)
               --x, y = imgBlocks:getDimensions()
             end
-          end
+
 
         end
       end
     end
   end
 
+  print("imgreturn", img)
+  print()
   return spr, img
 end
 

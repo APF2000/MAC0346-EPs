@@ -29,10 +29,12 @@ function love.load()
     x, y = imgBlocks:getDimensions()
   end
 
-  sprites, imgSprites= AUXLOADER.sprites(MAP)
-  print("sprites", sprites["caverman"])
-  print("sprites", sprites["caverman"][1])
+  sprites = AUXLOADER.sprites(MAP)
+  --[[print("sprites", sprites["caverman"])
+  print("sprites", sprites["caverman"][1])]]
 
+  print("imgsprites", imgSprites)
+  print("imgblocks", imgBlocks)
 
   for i=1, 1 do end
   --sprites[i] = love.graphics.newQuad(x, y, w, h, imgSprite:getDimensions())
@@ -41,10 +43,11 @@ end
 
 function love.draw()
 
-  --love.graphics.translate(300, 150)
-  --love.graphics.scale(0.25, 0.25)
+  love.graphics.translate(300, 150)
+  love.graphics.scale(0.45, 0.45)
   render()
-  love.graphics.draw(imgSprites, sprites["caverman"][1], 0, 0)
+  local cav = sprites["caverman"]
+  love.graphics.draw(cav.img, cav[1], 0, 0)
 
 
 end
