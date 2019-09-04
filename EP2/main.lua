@@ -43,10 +43,11 @@ end
 
 function love.draw()
 
-  --love.graphics.translate(300, 150)
-  --love.graphics.scale(0.3, 0.3)
-  --render()
+  love.graphics.translate(300, 150)
+  love.graphics.scale(0.3, 0.3)
+  render()
   local cav = sprites["caverman"]
+  --[[
   love.graphics.draw(cav.img, cav[1], 0, 0)
   love.graphics.draw(cav.img, cav[2], 100, 0)
   love.graphics.draw(cav.img, cav[3], 200, 0)
@@ -58,6 +59,7 @@ function love.draw()
   love.graphics.draw(cav.img, cav[9], 400, 100)
   love.graphics.draw(cav.img, cav[10], 500, 100)
   love.graphics.draw(cav.img, cav[11], 600, 100)
+  love.graphics.draw(cav.img, cav[30], 600, 200)]]
 
 
 end
@@ -104,7 +106,10 @@ function render()
           local transf = MATRIX.linearTransform(x,y,z,tilewidth,tileheight)
 
           local spr = sprites[obj.name]
-          love.graphics.draw(spr.img, spr[10], transf[1][1], transf[2][1])
+
+          local pos = 1
+          if(obj.name == "caverman") then pos = 30 end
+          love.graphics.draw(spr.img, spr[pos], transf[1][1], transf[2][1])
 
         end
       end

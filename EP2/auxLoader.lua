@@ -46,7 +46,6 @@ function AUXLOADER.sprites(MAP)
           local offsetx = prop.offsetx
           local offsety = prop.offsety
 
-
             spr[obj.name] = {}
 
             for k = 1, columns * rows do
