@@ -36,26 +36,26 @@ function love.load()
   --print("imgsprites", imgSprites)
   --print("imgblocks", imgBlocks)
 
-  for i=1, 1 do end
   --sprites[i] = love.graphics.newQuad(x, y, w, h, imgSprite:getDimensions())
   --x, y = imgSprite:getDimensions()
 end
 
+
+--local frameCounter = 1
 function love.draw()
 
   love.graphics.translate(300, 100)
-  love.graphics.scale(0.6, 0.6)
+  love.graphics.scale(0.45, 0.45)
   render()
+  --love.graphics.print(frameCounter)
 
 end
 
-local frameCounter = 1
-local FPS = 1
-function love.update(dt)
-  if dt > 1 / FPS then
+--[[function love.update(dt, obj)
+  if dt > 1 /  then
     frameCounter = frameCounter % FPS + 1
   end
-end
+end]]
 
 function render()
 
@@ -107,11 +107,17 @@ function render()
 
           love.graphics.draw(spr.img, spr[frameToSet], transf[1][1], transf[2][1])
 
-          if frameCounter == FPS then
+          --obj.oldTime = love.timer.getTime()
+          obj.newTime = love.timer.getTime()
+          print("old", obj.oldTime, ", new", obj.newTime)
+
+          if obj.newTime - obj.oldTime >= 1 / obj.properties.fps then
+
             frameVector.current = current % total
 
             print("framevec=", frameVector)
             print("current=", frameVector.current)
+            obj.oldTime = obj.newTime
           end
 
         end

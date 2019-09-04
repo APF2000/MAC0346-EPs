@@ -28,7 +28,9 @@ local function framesTable(obj)
     i = i + 1
   end
   frames["current"] = 1
-  frames["total"] = i - 1
+  frames["total"] = i - 1  
+
+  obj.newTime, obj.oldTime = 0, 0
   obj.properties.frames = frames
 end
 
