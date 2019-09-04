@@ -1,7 +1,7 @@
 local AUXLOADER = {}
 
-function AUXLOADER.format(name)
-  return string.format("maps/%s", name)
+function AUXLOADER.format(pathName, fileName, extension)
+  return string.format("%s/%s%s", pathName, fileName, extension)
 end
 
 function AUXLOADER.blocks(MAP, index)
@@ -21,7 +21,58 @@ function AUXLOADER.blocks(MAP, index)
 end
 
 function AUXLOADER.sprites(MAP)
+  local layers = MAP.layers
+  local x, y, w, h = 0, 0, 0, 0
+  local spr = {}
 
+  for i, layer in ipairs(layers) do
+    if(layer.type == "objectgroup") then
+
+      for j, obj in ipairs(layer.objects) do
+        if(obj.type == "sprite") then
+          local prop = obj.properties
+
+          local format = AUXLOADER.format("chars", obj.name, ".png")
+
+          local img = love.graphics.newImage(format)
+          print("img", img)
+          local columns = prop.columns
+          local rows = prop.rows
+
+          local dimw, dimh = img:getDimensions()
+          w = math.floor(dimw / columns)
+          h = math.floor(dimh / rows)
+
+          local offsetx = prop.offsetx
+          local offsety = prop.offsety
+
+          if(spr[obj.name] == nil) then
+            spr[obj.name] = {}
+
+            for k = 1, columns * rows do
+              x = w * (k % columns)
+              y = h * math.floor(k / columns)
+
+              spr[obj.name][k] = love.graphics.newQuad(x, y, w, h, img:getDimensions())
+
+              if k == 1 and obj.name == "caverman" then
+                print("k=", k)
+                print(spr["caverman"])
+                print(spr["caverman"][1])
+                print()
+              end
+
+              --love.graphics.draw(img, spr[obj.name][k], 0, 0)
+              --x, y = imgBlocks:getDimensions()
+            end
+          end
+
+        end
+      end
+    end
+  end
+
+  return spr, img
 end
 
 return AUXLOADER

@@ -1,23 +1,23 @@
 local AUXLOADER = require "auxLoader"
 local MATRIX = require "matrix"
 
-local path = arg[2]
+local mapName = arg[2]
+mapName = AUXLOADER.format("maps", mapName, ".lua")
 path = string.format("maps/%s.lua", path)
 
-local chunck = love.filesystem.load(path)
+local chunck = love.filesystem.load(mapName)
 local MAP = chunck()
 MAP.quads = {}
 
 local blocks = {}
 local sprites = {}
 local tilesets = MAP.tilesets[1]
-local layers = tilesets.layers
+local layers = MAP.layers
 
 function love.load()
 
-  local format = string.format("maps/%s", tilesets.image)
-  img = love.graphics.newImage(format)
-
+  local formatBlocks = AUXLOADER.format("maps", tilesets.image, "")
+  imgBlocks = love.graphics.newImage(formatBlocks)
   local qtdeTiles = tilesets.tilecount
 
   for i = 1, qtdeTiles do
@@ -25,32 +25,27 @@ function love.load()
 
     x, y, w, h = AUXLOADER.blocks(MAP, index)
 
-    blocks[i] = love.graphics.newQuad(x, y, w, h, img:getDimensions())
-    x, y = img:getDimensions()
+    blocks[i] = love.graphics.newQuad(x, y, w, h, imgBlocks:getDimensions())
+    x, y = imgBlocks:getDimensions()
   end
 
-  for i = 1, layer in ipairs(layers) do
-    if(layer.type == "objectgroup") then
-      for j = 1, obj in ipairs(layer.objects) do
-        if(obj.type == "sprite") then
+  sprites, imgSprites= AUXLOADER.sprites(MAP)
+  print("sprites", sprites["caverman"])
+  print("sprites", sprites["caverman"][1])
 
-          local index = i - 1
 
-          x, y, w, h = AUXLOADER.blocks(MAP, index)
-
-          blocks[i] = love.graphics.newQuad(x, y, w, h, img:getDimensions())
-          x, y = img:getDimensions()
-        end
-      end
-    end
-  end
+  for i=1, 1 do end
+  --sprites[i] = love.graphics.newQuad(x, y, w, h, imgSprite:getDimensions())
+  --x, y = imgSprite:getDimensions()
 end
 
 function love.draw()
 
-  love.graphics.translate(300, 150)
-  love.graphics.scale(0.25, 0.25)
+  --love.graphics.translate(300, 150)
+  --love.graphics.scale(0.25, 0.25)
   render()
+  love.graphics.draw(imgSprites, sprites["caverman"][1], 0, 0)
+
 
 end
 
@@ -73,7 +68,7 @@ function render()
 
           if(data ~= 0) then
             local transf = MATRIX.linearTransform(x,y,z,tilewidth,tileheight)
-            love.graphics.draw(img, blocks[data], transf[1][1], transf[2][1])
+            love.graphics.draw(imgBlocks, blocks[data], transf[1][1], transf[2][1])
           end
           x = x + 1
         end
@@ -95,7 +90,7 @@ function render()
           --print("frame=", frame)
           local transf = MATRIX.linearTransform(x,y,z,tilewidth,tileheight)
 
-          love.graphics.draw(img, blocks[148], transf[1][1], transf[2][1])
+          love.graphics.draw(imgBlocks, sprites["caverman"][1], transf[1][1], transf[2][1])
 
         end
       end
