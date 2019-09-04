@@ -52,21 +52,11 @@ function AUXLOADER.sprites(MAP)
             for k = 1, columns * rows do
               x = w * (k % columns)
               y = h * math.floor(k / columns)
+              print("x, y", x, y)
 
-              spr[obj.name][k] = love.graphics.newQuad(x, y, w, h, img:getDimensions())
-              spr[obj.name].img = img
-
-              if k == 1 and obj.name == "caverman" then
-                print("k=", k)
-                print(spr["caverman"])
-                print(spr["caverman"][1])
-                print()
-              end
-
-              --love.graphics.draw(img, spr[obj.name][k], 0, 0)
-              --x, y = imgBlocks:getDimensions()
+              spr[obj.name][k] = love.graphics.newQuad(x, y, w, h, dimw, dimh)
             end
-
+            spr[obj.name].img = img
 
         end
       end
