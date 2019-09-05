@@ -1,3 +1,5 @@
+--luacheck: globals love
+
 local AUXLOADER = require "auxLoader"
 local MATRIX = require "matrix"
 
@@ -39,7 +41,7 @@ local function render()
   local w, h = MAP.width, MAP.height
   local tilewidth, tileheight = MAP.tilewidth, MAP.tileheight
 
-  for k, layer in ipairs(layers) do
+  for _, layer in ipairs(layers) do
 
     if(layer.type == "tilelayer") then
       y, z = 0, layer.offsety
@@ -59,7 +61,7 @@ local function render()
       end
 
     else
-      for i, obj in ipairs(layer.objects) do
+      for _, obj in ipairs(layer.objects) do
 
         local xobj = math.floor(obj.x  / obj.width)
         local yobj = math.floor(obj.y / obj.height)
@@ -67,6 +69,8 @@ local function render()
         if(obj.type == "sprite" and obj.visible) then
 
           local transf = MATRIX.linearTransform(xobj,yobj,z,tilewidth,tileheight)
+          transf[1][1] = transf[1][1] + obj.properties.offsetx
+          transf[2][1] = transf[2][1] + obj.properties.offsety
 
           local spr = sprites[obj.name]
           local frameVector = obj.properties.frames

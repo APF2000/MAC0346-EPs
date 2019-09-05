@@ -1,3 +1,5 @@
+--luacheck: globals love
+
 local AUXLOADER = {}
 
 function AUXLOADER.format(pathName, fileName, extension)
@@ -35,10 +37,10 @@ function AUXLOADER.sprites(MAP)
   local layers = MAP.layers
   local spr = {}
 
-  for i, layer in ipairs(layers) do
+  for _, layer in ipairs(layers) do
     if(layer.type == "objectgroup") then
 
-      for j, obj in ipairs(layer.objects) do
+      for _, obj in ipairs(layer.objects) do
         if(obj.type == "sprite") then
 
           --Trocando os frames de string para table
