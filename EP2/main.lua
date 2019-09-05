@@ -3,7 +3,6 @@ local MATRIX = require "matrix"
 
 local mapName = arg[2]
 mapName = AUXLOADER.format("maps", mapName, ".lua")
-path = string.format("maps/%s.lua", path)
 
 local chunck = love.filesystem.load(mapName)
 local MAP = chunck()
@@ -13,6 +12,7 @@ local blocks = {}
 local sprites = {}
 local tilesets = MAP.tilesets[1]
 local layers = MAP.layers
+local imgBlocks
 
 function love.load()
 
@@ -23,53 +23,26 @@ function love.load()
   for i = 1, qtdeTiles do
     local index = i - 1
 
-    x, y, w, h = AUXLOADER.blocks(MAP, index)
+    local x, y, w, h = AUXLOADER.blocks(MAP, index)
 
     blocks[i] = love.graphics.newQuad(x, y, w, h, imgBlocks:getDimensions())
-    x, y = imgBlocks:getDimensions()
   end
 
   sprites = AUXLOADER.sprites(MAP)
-  --[[print("sprites", sprites["caverman"])
-  print("sprites", sprites["caverman"][1])]]
-
-  --print("imgsprites", imgSprites)
-  --print("imgblocks", imgBlocks)
-
-  --sprites[i] = love.graphics.newQuad(x, y, w, h, imgSprite:getDimensions())
-  --x, y = imgSprite:getDimensions()
-end
-
-
---local frameCounter = 1
-function love.draw()
-
-  love.graphics.translate(300, 100)
-  love.graphics.scale(0.45, 0.45)
-  render()
-  --love.graphics.print(frameCounter)
 
 end
 
---[[function love.update(dt, obj)
-  if dt > 1 /  then
-    frameCounter = frameCounter % FPS + 1
-  end
-end]]
-
-function render()
-
-  print("\ntaoquei")
+local function render()
 
   love.graphics.setBackgroundColor(MAP.backgroundcolor)
-  local x, y, z = 0, 0, 0
+  local x, y, z
   local w, h = MAP.width, MAP.height
   local tilewidth, tileheight = MAP.tilewidth, MAP.tileheight
 
   for k, layer in ipairs(layers) do
 
     if(layer.type == "tilelayer") then
-      x, y, z = 0, 0, layer.offsety
+      y, z = 0, layer.offsety
       for i = 1, h do
         x = 0
         for j = 1, w do
@@ -88,12 +61,12 @@ function render()
     else
       for i, obj in ipairs(layer.objects) do
 
-        local x = math.floor(obj.x  / obj.width)
-        local y = math.floor(obj.y / obj.height)
+        local xobj = math.floor(obj.x  / obj.width)
+        local yobj = math.floor(obj.y / obj.height)
 
         if(obj.type == "sprite" and obj.visible) then
 
-          local transf = MATRIX.linearTransform(x,y,z,tilewidth,tileheight)
+          local transf = MATRIX.linearTransform(xobj,yobj,z,tilewidth,tileheight)
 
           local spr = sprites[obj.name]
           local frameVector = obj.properties.frames
@@ -101,29 +74,45 @@ function render()
           local current = frameVector.current % total + 1
           local frameToSet = frameVector[current]
 
-          print("\ntotal - name", total, obj.name)
-          print("current", current)
-          print('frameToSet', frameToSet)
+          local flipX = 1
+          if obj.properties.flip == true then
+            flipX = -1
+          end
 
-          love.graphics.draw(spr.img, spr[frameToSet], transf[1][1], transf[2][1])
+          love.graphics.draw(spr.img, spr[frameToSet],
+            transf[1][1], transf[2][1], 0, flipX, 1)
 
-          --obj.oldTime = love.timer.getTime()
+
           obj.newTime = love.timer.getTime()
-          print("old", obj.oldTime, ", new", obj.newTime)
+
 
           if obj.newTime - obj.oldTime >= 1 / obj.properties.fps then
 
             frameVector.current = current % total
 
-            print("framevec=", frameVector)
-            print("current=", frameVector.current)
             obj.oldTime = obj.newTime
           end
 
+          else if(obj.type == "camera") then
+
+            love.graphics.push()
+            love.graphics.translate(obj.x, obj.y)
+            love.graphics.scale(10, 10)
+            love.graphics.pop()
+          end
         end
       end
-
     end
   end
 
+end
+
+
+function love.draw()
+
+  love.graphics.translate(850, 200)
+  love.graphics.scale(0.7, 0.7)
+  render()
+
+  love.window.setFullscreen(true)
 end

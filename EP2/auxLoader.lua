@@ -11,11 +11,8 @@ function AUXLOADER.blocks(MAP, index)
   local tileH = tilesets.tileheight
   local tileW = tilesets.tilewidth
 
-  local startX = 0
-  local startY = 0
-
-  startX = tileW * (index % columns)
-  startY = tileH * math.floor(index / columns)
+  local startX = tileW * (index % columns)
+  local startY = tileH * math.floor(index / columns)
 
   return startX, startY, tileW, tileH
 end
@@ -28,7 +25,7 @@ local function framesTable(obj)
     i = i + 1
   end
   frames["current"] = 1
-  frames["total"] = i - 1  
+  frames["total"] = i - 1
 
   obj.newTime, obj.oldTime = 0, 0
   obj.properties.frames = frames
@@ -36,7 +33,6 @@ end
 
 function AUXLOADER.sprites(MAP)
   local layers = MAP.layers
-  local x, y, w, h = 0, 0, 0, 0
   local spr = {}
 
   for i, layer in ipairs(layers) do
@@ -53,24 +49,20 @@ function AUXLOADER.sprites(MAP)
           local format = AUXLOADER.format("chars", obj.name, ".png")
 
           local img = love.graphics.newImage(format)
-          --print("img", img)
           local columns = prop.columns
           local rows = prop.rows
 
           local dimw, dimh = img:getDimensions()
-          w = math.floor(dimw / columns)
-          h = math.floor(dimh / rows)
-
-          local offsetx = prop.offsetx
-          local offsety = prop.offsety
+          local w = math.floor(dimw / columns)
+          local h = math.floor(dimh / rows)
 
           if spr[obj.name] == nil then
             spr[obj.name] = {}
 
             for k = 1, columns * rows do
-              x = w * (k % columns)
-              y = h * math.floor(k / columns)
-              --print("x, y", x, y)
+              local x = w * (k % columns)
+              local y = h * math.floor(k / columns)
+
 
               spr[obj.name][k] = love.graphics.newQuad(x, y, w, h, dimw, dimh)
             end
@@ -81,9 +73,7 @@ function AUXLOADER.sprites(MAP)
     end
   end
 
-  --print("imgreturn", img)
-  --print()
-  return spr, img
+  return spr
 end
 
 return AUXLOADER
