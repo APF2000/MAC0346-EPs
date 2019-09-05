@@ -33,7 +33,7 @@ local function framesTable(obj)
   obj.properties.frames = frames
 end
 
-function AUXLOADER.sprites(MAP)
+function AUXLOADER.spriteQuads(MAP)
   local layers = MAP.layers
   local spr = {}
 
@@ -76,6 +76,29 @@ function AUXLOADER.sprites(MAP)
   end
 
   return spr
+end
+
+function AUXLOADER.objects(layers)
+  local sprites, cameras = {}, {}
+
+  for _, layer in ipairs(layers) do
+    if(layer.type == "objectgroup") then
+
+      local spriteIndex, cameraIndex = 1, 1
+      for _, obj in ipairs(layer.objects) do
+        obj.layer = layer.name
+        if(obj.type == "sprite") then
+          sprites[spriteIndex] = obj
+          spriteIndex = spriteIndex + 1
+        elseif(obj.type == "camera") then
+          cameras[cameraIndex] = obj
+          cameraIndex = cameraIndex + 1
+        end
+      end
+
+    end
+  end
+  return sprites, cameras
 end
 
 return AUXLOADER

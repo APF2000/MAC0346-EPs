@@ -5,10 +5,13 @@ local MATRIX = require "matrix"
 function AUXLAYER.tilelayer(MAP, height, width, layer, img, blocks)
   local y, z = 0, layer.offsety
   local tilewidth, tileheight = MAP.tilewidth, MAP.tileheight
+  print("width=", width, ", height=", height)
   for i = 1, height do
     local x = 0
     for j = 1, width do
+      print((i - 1) * width + j, i, j)
       local data = layer.data[(i - 1) * width + j]
+      print("data", data)
       if(data ~= 0) then
         local transf = MATRIX.linearTransform(x,y,z,tilewidth,tileheight)
         love.graphics.draw(img, blocks[data], transf[1][1], transf[2][1])
@@ -20,7 +23,14 @@ function AUXLAYER.tilelayer(MAP, height, width, layer, img, blocks)
   return z
 end
 
-function AUXLAYER.sprite(obj, transf, sprites)
+function AUXLAYER.sprite(MAP, obj, sprites, layer, z)
+
+  if obj.layer ~= layer.name then return end
+
+  local xobj = math.floor(obj.x  / obj.width)
+  local yobj = math.floor(obj.y / obj.height)
+  local transf = MATRIX.linearTransform(xobj,yobj,z,MAP.tilewidth,MAP.tileheight)
+
   transf[1][1] = transf[1][1] + obj.properties.offsetx
   transf[2][1] = transf[2][1] + obj.properties.offsety
 
@@ -42,6 +52,13 @@ function AUXLAYER.sprite(obj, transf, sprites)
     frameVector.current = current % total
     obj.oldTime = obj.newTime
   end
+end
+
+function AUXLAYER.camera(obj)
+  love.graphics.push()
+  love.graphics.translate(obj.x, obj.y)
+  love.graphics.scale(10, 10)
+  love.graphics.pop()
 end
 
 return AUXLAYER

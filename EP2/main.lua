@@ -1,28 +1,27 @@
 --luacheck: globals love
 
 local AUXLOADER = require "auxLoader"
-local MATRIX = require "matrix"
-local AUXLAYER = require "layer"
+local AUXLAYER = require "auxlayer"
 
 local mapName = arg[2]
 mapName = AUXLOADER.format("maps", mapName, ".lua")
 
 local chunck = love.filesystem.load(mapName)
 local MAP = chunck()
-MAP.quads = {}
 
 local blocks = {}
+local spriteQuads = {}
 local sprites = {}
+local cameras = {}
 local tilesets = MAP.tilesets[1]
 local layers = MAP.layers
 local imgBlocks
 
 function love.load()
-
   local formatBlocks = AUXLOADER.format("maps", tilesets.image, "")
   imgBlocks = love.graphics.newImage(formatBlocks)
-  local qtdeTiles = tilesets.tilecount
 
+  local qtdeTiles = tilesets.tilecount
   for i = 1, qtdeTiles do
     local index = i - 1
 
@@ -31,47 +30,46 @@ function love.load()
     blocks[i] = love.graphics.newQuad(x, y, w, h, imgBlocks:getDimensions())
   end
 
-  sprites = AUXLOADER.sprites(MAP)
+  spriteQuads = AUXLOADER.spriteQuads(MAP)
+  sprites, cameras = AUXLOADER.objects(layers)
 
+  love.graphics.setBackgroundColor(MAP.backgroundcolor)
 end
 
 local function render()
-
-  love.graphics.setBackgroundColor(MAP.backgroundcolor)
   local z
   local w, h = MAP.width, MAP.height
-  local tilewidth, tileheight = MAP.tilewidth, MAP.tileheight
+
+  --[[for _, layer in ipairs(layers) do
+    if layer.type == "tilelayer" then
+      z = AUXLAYER.tilelayer(MAP, h, w, layer, imgBlocks, blocks, MAP)
+    end
+  end
+
+  for _, spr in ipairs(sprites) do
+    AUXLAYER.sprite(MAP, spr, spriteQuads, z)
+  end]]
 
   for _, layer in ipairs(layers) do
 
     if(layer.type == "tilelayer") then
       z = AUXLAYER.tilelayer(MAP, h, w, layer, imgBlocks, blocks, MAP)
     else
-      for _, obj in ipairs(layer.objects) do
-
-        local xobj = math.floor(obj.x  / obj.width)
-        local yobj = math.floor(obj.y / obj.height)
-
-        if(obj.type == "sprite" and obj.visible) then
-
-          local transf = MATRIX.linearTransform(xobj,yobj,z,tilewidth,tileheight)
-          AUXLAYER.sprite(obj, transf, sprites)
-
-
-          else if(obj.type == "camera") then
-
-            love.graphics.push()
-            love.graphics.translate(obj.x, obj.y)
-            love.graphics.scale(10, 10)
-            love.graphics.pop()
-          end
-        end
+      for _, spr in ipairs(sprites) do
+        AUXLAYER.sprite(MAP, spr, spriteQuads, layer, z)
       end
+      --[[for _, obj in ipairs(layer.objects) do
+        if(obj.type == "sprite" and obj.visible) then
+          AUXLAYER.sprite(MAP, obj, spriteQuads, z)
+
+        elseif(obj.type == "camera") then
+          AUXLAYER.camera(obj)
+        end
+      end]]
     end
+
   end
-
 end
-
 
 function love.draw()
 
