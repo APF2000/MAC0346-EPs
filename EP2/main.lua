@@ -46,7 +46,7 @@ function love.update(dt)
   camCurrent = cameras[tostring(current)]
   Xprev, Yprev = camCurrent.x, camCurrent.y
 
-  print("current", current)
+--  print("current", current)
   if(Xnext == nil or camCurrent == nil) then
     return
   end
@@ -85,14 +85,6 @@ local function render()
         for _, spr in ipairs(sprites) do
           AUXLAYER.sprite(MAP, spr, spriteQuads, layer, z)
         end
-        --[[for _, obj in ipairs(layer.objects) do
-          if(obj.type == "sprite" and obj.visible) then
-            AUXLAYER.sprite(MAP, obj, spriteQuads, z)
-
-          elseif(obj.type == "camera") then
-            AUXLAYER.camera(obj)
-          end
-        end]]
       end
 
     end
@@ -100,9 +92,9 @@ end
 
 function love.draw()
 
-  --love.graphics.translate(850, 200)
-  --love.graphics.scale(0.7, 0.7)
+  love.graphics.translate(350, 50)
+  love.graphics.scale(0.7, 0.7)
   render()
 
-  love.window.setFullscreen(true)
+  --love.window.setFullscreen(true)
 end
