@@ -84,15 +84,15 @@ function AUXLOADER.objects(layers)
   for _, layer in ipairs(layers) do
     if(layer.type == "objectgroup") then
 
-      local spriteIndex, cameraIndex = 1, 1
+      local spriteIndex = 1
       for _, obj in ipairs(layer.objects) do
         obj.layer = layer.name
         if(obj.type == "sprite") then
           sprites[spriteIndex] = obj
           spriteIndex = spriteIndex + 1
         elseif(obj.type == "camera") then
-          cameras[cameraIndex] = obj
-          cameraIndex = cameraIndex + 1
+          cameras[obj.name] = obj
+          print("na posicao", obj.name, " pus", obj)
         end
       end
 

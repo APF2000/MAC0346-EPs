@@ -5,13 +5,13 @@ local MATRIX = require "matrix"
 function AUXLAYER.tilelayer(MAP, height, width, layer, img, blocks)
   local y, z = 0, layer.offsety
   local tilewidth, tileheight = MAP.tilewidth, MAP.tileheight
-  print("width=", width, ", height=", height)
+  --print("width=", width, ", height=", height)
   for i = 1, height do
     local x = 0
     for j = 1, width do
-      print((i - 1) * width + j, i, j)
+      --print((i - 1) * width + j, i, j)
       local data = layer.data[(i - 1) * width + j]
-      print("data", data)
+      --print("data", data)
       if(data ~= 0) then
         local transf = MATRIX.linearTransform(x,y,z,tilewidth,tileheight)
         love.graphics.draw(img, blocks[data], transf[1][1], transf[2][1])
@@ -54,11 +54,11 @@ function AUXLAYER.sprite(MAP, obj, sprites, layer, z)
   end
 end
 
-function AUXLAYER.camera(obj)
+--[[function AUXLAYER.camera(obj)
   love.graphics.push()
   love.graphics.translate(obj.x, obj.y)
   love.graphics.scale(10, 10)
   love.graphics.pop()
-end
+end]]
 
 return AUXLAYER
