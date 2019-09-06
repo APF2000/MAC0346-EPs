@@ -44,6 +44,9 @@ function AUXLAYER.sprite(MAP, obj, sprites, layer, z)
 
   love.graphics.push()
   love.graphics.translate(64, 64*2.8)
+  love.graphics.setColor(0, 0, 0 ,0.55)
+  love.graphics.ellipse("fill", transf[1][1], transf[2][1], 30, 5)
+  love.graphics.setColor(1, 1, 1)
   love.graphics.draw(spr.img, spr[frameToSet],
     transf[1][1], transf[2][1], 0, flipX, 1,
     obj.properties.offsetx, obj.properties.offsety)
