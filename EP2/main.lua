@@ -32,11 +32,11 @@ function love.load()
 
   spriteQuads = AUXLOADER.spriteQuads(MAP)
   sprites, cameras = AUXLOADER.objects(layers)
-  camQuant = table.getn(cameras)
+  --camQuant = table.getn(cameras)
 
   love.graphics.setBackgroundColor(MAP.backgroundcolor)
 end
-
+--[[]
 local current = 1
 local camQuant
 local camCurrent
@@ -46,7 +46,6 @@ function love.update(dt)
   camCurrent = cameras[tostring(current)]
   Xprev, Yprev = camCurrent.x, camCurrent.y
 
---  print("current", current)
   if(Xnext == nil or camCurrent == nil) then
     return
   end
@@ -69,13 +68,13 @@ function love.update(dt)
     Xctrl = Xctrl + dx
     Yctrl = Yctrl + dy
   end
-end
+end]]
 
 local function render()
   local z
   local w, h = MAP.width, MAP.height
 
-    love.graphics.translate(Xctrl, Yctrl)
+    --love.graphics.translate(Xctrl, Yctrl)
 
     for _, layer in ipairs(layers) do
 
@@ -85,6 +84,9 @@ local function render()
         for _, spr in ipairs(sprites) do
           AUXLAYER.sprite(MAP, spr, spriteQuads, layer, z)
         end
+        for _, cam in ipairs(cameras) do
+          AUXLAYER.camera(cam)
+        end
       end
 
     end
@@ -92,9 +94,9 @@ end
 
 function love.draw()
 
-  love.graphics.translate(350, 50)
+  love.graphics.translate(850, 150)
   love.graphics.scale(0.7, 0.7)
   render()
 
-  --love.window.setFullscreen(true)
+  love.window.setFullscreen(true)
 end
