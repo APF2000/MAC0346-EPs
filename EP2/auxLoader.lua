@@ -1,5 +1,4 @@
 --luacheck: globals love
-
 local AUXLOADER = {}
 
 function AUXLOADER.format(pathName, fileName, extension)
@@ -42,7 +41,6 @@ function AUXLOADER.spriteQuads(MAP)
 
       for _, obj in ipairs(layer.objects) do
         if(obj.type == "sprite") then
-
           --Trocando os frames de string para table
           framesTable(obj)
 
@@ -65,7 +63,6 @@ function AUXLOADER.spriteQuads(MAP)
               local x = w * (k % columns)
               local y = h * math.floor(k / columns)
 
-
               spr[obj.name][k] = love.graphics.newQuad(x, y, w, h, dimw, dimh)
             end
             spr[obj.name].img = img
@@ -74,7 +71,6 @@ function AUXLOADER.spriteQuads(MAP)
       end
     end
   end
-
   return spr
 end
 
