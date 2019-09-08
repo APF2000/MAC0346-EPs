@@ -1,4 +1,5 @@
 --luacheck: globals love
+
 local AUXLOADER = {}
 
 function AUXLOADER.format(pathName, fileName, extension)
@@ -76,10 +77,8 @@ end
 
 function AUXLOADER.objects(layers)
   local sprites, cameras = {}, {}
-
   for _, layer in ipairs(layers) do
     if(layer.type == "objectgroup") then
-
       local spriteIndex = 1
       for _, obj in ipairs(layer.objects) do
         obj.layer = layer.name
@@ -88,6 +87,7 @@ function AUXLOADER.objects(layers)
           spriteIndex = spriteIndex + 1
         elseif(obj.type == "camera") then
           cameras[obj.name] = obj
+          print("na posicao", obj.name, " pus", obj)
         end
       end
 
