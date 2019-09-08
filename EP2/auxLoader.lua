@@ -86,9 +86,7 @@ function AUXLOADER.objects(layers)
           sprites[spriteIndex] = obj
           spriteIndex = spriteIndex + 1
         elseif(obj.type == "camera") then
-          cameras[obj.name] = obj
-          print("na posicao", obj.name, " pus", obj)
-        end
+          cameras[obj.name] = obj  end
       end
 
     end
