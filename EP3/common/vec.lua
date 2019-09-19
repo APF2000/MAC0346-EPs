@@ -91,4 +91,3 @@ function Vec:normalized()
 end
 
 return Vec
-
