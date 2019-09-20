@@ -2,41 +2,39 @@
 local newVec = require "common/vec"
 local v2 = newVec()
 local v1 = newVec()
-
-v1:_init(1, 1)
-v2:_init(1, 2)
-
-print(v1:__tostring())
-print(v2:__tostring())
-
-print(v2:dot(v1))
-
-local v3 = v1 + v2
-print(v3)
+local key = require "keyboard"
 
 function love.load()
-
+  key:hook_love_events()
 end
+
+local scaleFactor = 1.1
+local scaleX, scaleY = 1, 1
 
 function love.update(dt)
-  if(love.keyboard.isDown('a')) then
-    print("uaudeucerto")
-  end
-end
-
-local text = ""
-
-function love.keypressed(key, unicode)
-  if key == "escape" then
+  if key:keyDown("lctrl") or key:keyDown("rctrl") then
+    if key:keyDown("kp+") then
+      print("+")
+      scaleX = scaleX * scaleFactor
+      scaleY = scaleY * scaleFactor
+    elseif key:keyDown("kp-") then
+      print("-")
+      scaleX = scaleX / scaleFactor
+      scaleY = scaleY / scaleFactor
+    end
+  elseif key:keyDown("lalt") then
+    zoomOut = true
+  elseif key:keyDown("escape") then
     love.event.quit()
   end
 
-end
-
-function love.textinput(t)
-    text = text .. t
+  key:update(dt)
 end
 
 function love.draw()
-  love.graphics.printf(text, 0, 0, 800)
+  love.graphics.scale(scaleX, scaleY)
+
+  love.graphics.setColor(1, 1, 1)
+  love.graphics.circle('line', 0, 0, 100)
+
 end
