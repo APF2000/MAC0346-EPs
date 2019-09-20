@@ -39,7 +39,7 @@ function love.update(dt)
       scaleY = scaleY / scaleFactor
     end]]
   for _, func in pairs(DICT) do
-    print("to no for dos comandos", func)
+    --print("to no for dos comandos", func)
     --[[for i, command in pairs(func) do
       print("comando", i, command)
     end]]
