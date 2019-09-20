@@ -10,10 +10,20 @@ function Keyboard:update(dt)
   end
 end
 
--- Retorna o estado atual da tecla
-function Keyboard:key(key)
-  return love.keyboard.isDown(key)
+function Keyboard:allDown(keys)
+  for i, key in pairs(keys) do
+    print("key = ", key, i)
+    if not love.keyboard.isDown(key) then
+      return false
+    end
+  end
+  return true
 end
+
+-- Retorna o estado atual da tecla
+--[[function Keyboard:key(key)
+  return love.keyboard.isDown(key)
+end]]
 
 -- Retorna se a tecla foi pressionada no frame atual
 function Keyboard:keyDown(key)
