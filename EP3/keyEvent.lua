@@ -16,6 +16,8 @@ function zoomOut(scale, trans)
   scale.y = scale.y / scale.factor
 end
 
+
+
 --print("keyevent requerido")
 
 local functions = {

@@ -40,9 +40,9 @@ function love.update(dt)
     end]]
   for _, func in pairs(DICT) do
     print("to no for dos comandos", func)
-    for i, command in pairs(func) do
+    --[[for i, command in pairs(func) do
       print("comando", i, command)
-    end
+    end]]
     KEYEVENT:controller(func, scale, trans)
   end
 --[[ if KEY:allDown(DICT["zoomIn"]) then
