@@ -4,8 +4,8 @@ local Same = {
 }
 
 local Dictionary = {
-  ["zoomIn"] = {"lctrl", "i"} or {"rctrl", "i"},
-  ["zoomOut"] = {"a"}
+  ["zoomIn"] = {list = {"lctrl", "i"}, name = "zoomIn"},
+  ["zoomOut"] = {list = {"a"}, name = "zoomOut"}
 }
 
 return Dictionary

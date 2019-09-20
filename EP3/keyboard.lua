@@ -11,11 +11,16 @@ function Keyboard:update(dt)
 end
 
 function Keyboard:allDown(keys)
+  if keys == nil then return end
+
   for i, key in pairs(keys) do
     print("key = ", key, i)
-    if not love.keyboard.isDown(key) then
+    print("typekey = ", type(key))
+    if type(key) ~= "table" and not love.keyboard.isDown(key) then
+      print("not down")
       return false
     end
+    print("is down")
   end
   return true
 end
