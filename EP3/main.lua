@@ -1,24 +1,63 @@
 -- luacheck: globals love
-local newVec = require "common/vec"
-local v2 = newVec()
-local v1 = newVec()
+local Vec = require "common/vec"
+local SCENE = require "scene/test"
+
+--local class = require "class" -> Ainda não usado
+
+local v2 = Vec()
+local v1 = Vec()
+
 local KEY = require "keyboard"
 local DICT = require "dictionary"
 local KEYEVENT = require "keyEvent"
 
-function love.load()
-  KEY:hook_love_events()
+--------[[ Defining programm variables ]]--------
+
+-- Window resolution
+local W, H
+
+-- Flag for existence of controlled entity (1 if it exists, 0 if doesn't)
+local controlled
+
+-- Store all game objects
+local objects
+
+--------[[ Auxiliary functions ]]----------------
+
+--- Creates and initializes all game objects according to the given scene, and
+--  return them as a list. Also checks if there is a controllable entity and
+--  sets the flag 'controlled'.
+local function createObjects(scene)
+  local all_objects = {}
+  local item
+  local total
+  -- fazer lógica de criação das entidades
+  for _, obj in ipairs(scene) do
+    total = obj.n
+    local count = 0
+    while count < total do
+      item = generateEntity(obj.entity)
+      table.insert(all_objects, item) --appends item to end of all_objects list
+      count = count + 1
+    end
+  end
+  return all_objects
 end
 
---[[local scaleFactor = 1.02
-local scaleX, scaleY = 1, 1]]
+--- Given the name of the entity, return a list 
+local function generateEntity(name)
+  -- escrever
+end
 
-local scale = {x = 1, y = 1, factor = 1.02}
 
---[[local transFactor = 10
-local transX, transY = 0, 0]]
+--------[[ Main game functions ]]----------------
 
-local trans = {x = 0, y = 0, factor = 10}
+function love.load()
+  W, H = love.graphics.getDimensions()
+  objects = createObjects(SCENE)
+  --controlled = verifyControllableEntity(objects) --Verifica se tem entidade controlada no jogo e armazena na flag
+  controlled = 0 --pra testar por enquanto
+end
 
 function love.update(dt)
   --[[if KEY:keyDown("lctrl") or KEY:keyDown("rctrl") then
@@ -65,28 +104,27 @@ function love.update(dt)
 end
 
 
-
---[[function love.keypressed(key, unicode, isrepeat)
-  if key == "escape" then
-    love.event.quit()
+--- Detects when the player presses a keyboard button. Closes the game if it
+--  was the ESC button. Moves controlled entity if arrows are pressed.
+function love.keypressed (key)
+  if key == 'escape' then
+    love.event.push 'quit'
   end
-  if key == 'lctrl' or key == 'rctrl' or key == '+' then
-    print("ctrlkeypressed")
-    if(love.keyboard.isDown('lctrl')) then
-      print("left")
-    end
-    if(love.keyboard.isDown('[')) then
-      print("+")
-      love.graphics.scale(2.0, 2.0)
-    end
-  end
-end]]
+end
 
 function love.draw()
-  love.graphics.scale(scale.x, scale.y)
-  love.graphics.translate(trans.x, trans.y)
-
-  love.graphics.setColor(1, 1, 1)
-  love.graphics.circle('line', 0, 0, 100)
+  -- Changing world origin to draw things centered on the screen
+  love.graphics.push()
+  if controlled == 0 then
+    love.graphics.translate(W/2, H/2)
+  else
+    --mudar isso pra posição do objeto controlado!!!
+    love.graphics.translate(10, 10)
+  end
+  -- Put all drawings here:
+  love.graphics.circle('line', 0, 0, 1000) -- Map border
+  love.graphics.circle('fill', 0, 0, 8)
+  --
+  love.graphics.pop()
 
 end
