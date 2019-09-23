@@ -1,6 +1,7 @@
 -- luacheck: globals love
 local Vec = require "common/vec"
 local SCENE = require "scene/test"
+local Entity = require "entities_class"
 
 --local class = require "class" -> Ainda não usado
 
@@ -19,34 +20,47 @@ local W, H
 -- Flag for existence of controlled entity (1 if it exists, 0 if doesn't)
 local controlled
 
--- Store all game objects
-local objects
+-- Store game objects and player properties
+local objects, player
 
 --------[[ Auxiliary functions ]]----------------
 
---- Creates and initializes all game objects according to the given scene, and
---  return them as a list. Also checks if there is a controllable entity and
---  sets the flag 'controlled'.
-local function createObjects(scene)
-  local all_objects = {}
-  local item
-  local total
-  -- fazer lógica de criação das entidades
-  for _, obj in ipairs(scene) do
-    total = obj.n
-    local count = 0
-    while count < total do
-      item = generateEntity(obj.entity)
-      table.insert(all_objects, item) --appends item to end of all_objects list
-      count = count + 1
-    end
-  end
-  return all_objects
+
+--- Given a string with the name of an entity, returns a list with their properties.
+local function generateEntity(name)
+  return request "entity/" .. name
 end
 
---- Given the name of the entity, return a list 
-local function generateEntity(name)
-  -- escrever
+--- Creates and initializes all game objects according to the given scene, and
+--  return them as two lists - one with the player properties and the other with
+--  all other object properties. Also checks if there is a controllable entity
+--  and sets the flag 'controlled' accordingly.
+local function createObjects(scene)
+  local all_objects = {}
+  local player = {}
+  local name
+  local item
+  local total
+  local count
+  -- fazer lógica de criação das entidades
+  for _, obj in ipairs(scene) do
+    item = Entity()
+    name = obj.entity
+    if name == 'player' then
+      controlled = 1
+      item:set(name)
+      table.insert(player, item) --appends item to the player list
+    else --any other entity
+      total = obj.n
+      count = 0
+      while count < total do
+        item:set(name)
+        table.insert(all_objects, item) --appends item to the all_objects list
+        count = count + 1
+      end
+    end
+  end
+  return player, all_objects
 end
 
 
@@ -54,9 +68,7 @@ end
 
 function love.load()
   W, H = love.graphics.getDimensions()
-  objects = createObjects(SCENE)
-  --controlled = verifyControllableEntity(objects) --Verifica se tem entidade controlada no jogo e armazena na flag
-  controlled = 0 --pra testar por enquanto
+  player, objects = createObjects(SCENE)
 end
 
 function love.update(dt)
@@ -113,13 +125,15 @@ function love.keypressed (key)
 end
 
 function love.draw()
+  local x, y
   -- Changing world origin to draw things centered on the screen
   love.graphics.push()
   if controlled == 0 then
     love.graphics.translate(W/2, H/2)
   else
     --mudar isso pra posição do objeto controlado!!!
-    love.graphics.translate(10, 10)
+    x, y = player[1].position.point:get()
+    love.graphics.translate(y, x)
   end
   -- Put all drawings here:
   love.graphics.circle('line', 0, 0, 1000) -- Map border
