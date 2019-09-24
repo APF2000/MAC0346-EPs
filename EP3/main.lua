@@ -67,48 +67,22 @@ end
 --------[[ Main game functions ]]----------------
 
 function love.load()
+  KEY:hook_love_events()
   W, H = love.graphics.getDimensions()
   player, objects = createObjects(SCENE)
 end
 
+local scale = {x = 1, y = 1, factor = 1.02}
+
+local trans = {x = 0, y = 0, factor = 10}
+
+
 function love.update(dt)
-  --[[if KEY:keyDown("lctrl") or KEY:keyDown("rctrl") then
-    print("ctrl")
 
-    local som = {"lctrl", "a"}
-    if love.keyboard.isDown(som) and love.keyboard.isDown("lalt") then
-      print("ctrl alt")
-    end
-
-    if KEY:keyDown("I") then
-      print("+")
-      scaleX = scaleX * scaleFactor
-      scaleY = scaleY * scaleFactor
-    elseif KEY:keyDown("o") then
-      print("-")
-      scaleX = scaleX / scaleFactor
-      scaleY = scaleY / scaleFactor
-    end]]
   for _, func in pairs(DICT) do
-    --print("to no for dos comandos", func)
-    --[[for i, command in pairs(func) do
-      print("comando", i, command)
-    end]]
     KEYEVENT:controller(func, scale, trans)
   end
---[[ if KEY:allDown(DICT["zoomIn"]) then
-    scale.x = scale.x * scale.factor
-    scale.y = scale.y * scale.factor
-  elseif KEY:allDown(DICT["zoomOut"]) then
-    scale.x = scale.x / scale.factor
-    scale.y = scale.y / scale.factor
-  elseif KEY:allDown(DICT["left"]) then
-    scale.x = scale.x * scale.factor
-    scale.y = scale.y * scale.factor
-  elseif KEY:allDown(DICT["right"]) then
-    scale.x = scale.x * scale.factor
-    scale.y = scale.y * scale.factor]]
-  --[[else]]if KEY:keyDown("escape") then
+  if KEY:keyDown("escape") then
     love.event.quit()
   end
 
@@ -135,7 +109,12 @@ function love.draw()
     x, y = player[1].position.point:get()
     love.graphics.translate(y, x)
   end
+
+  love.graphics.scale(scale.x, scale.y)
+  love.graphics.translate(trans.x, trans.y)
+
   -- Put all drawings here:
+  love.graphics.setColor(1, 1, 1)
   love.graphics.circle('line', 0, 0, 1000) -- Map border
   love.graphics.circle('fill', 0, 0, 8)
   --
