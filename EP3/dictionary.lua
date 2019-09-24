@@ -5,7 +5,7 @@ local Same = {
 
 local Dictionary = {
   ["zoomIn"] = {list = {"lctrl", "i"}, name = "zoomIn"},
-  ["zoomOut"] = {list = {"a"}, name = "zoomOut"},
+  ["zoomOut"] = {list = {"lctrl", "o"}, name = "zoomOut"},
   ["up"] = {list = {"up"}, name = "up"},
   ["down"] = {list = {"down"}, name = "down"},
   ["right"] = {list = {"right"}, name = "right"},

@@ -5,8 +5,6 @@ KEYBOARD:hook_love_events()
 local DICT = require "dictionary"
 local F = require "functions"
 
---print("keyevent requerido")
-
 local functions = {
   ["zoomIn"] = F.zoomIn,
   ["zoomOut"] = F.zoomOut,
@@ -16,17 +14,13 @@ local functions = {
   ["left"] = F.left
 }
 
-function KeyEvent:controller(func, scale, trans)
-  print("entrei no controller")
---[[  print(KEYBOARD)
-  print(DICT)
-  print(DICT[func.name].list)
-  print(DICT[func.name].list[1])]]
+function KeyEvent:controller(func, parameters)
 
+  --print("params =", parameters, " unpack=", unpack(parameters))
   if KEYBOARD:allDown(DICT[func.name].list) then
-    functions[func.name](scale, trans)
+    functions[func.name](unpack(parameters))
   end
-  print("e sai correndo")
+
 end
 
 return KeyEvent

@@ -14,13 +14,13 @@ function Keyboard:allDown(keys)
   if keys == nil then return end
 
   for i, key in pairs(keys) do
-    print("key = ", key, i)
-    print("typekey = ", type(key))
+    --print("key = ", key, i)
+    --print("typekey = ", type(key))
     if type(key) ~= "table" and not love.keyboard.isDown(key) then
-      print("not down")
+      --print("not down")
       return false
     end
-    print("is down")
+    --print("is down")
   end
   return true
 end

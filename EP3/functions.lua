@@ -1,13 +1,11 @@
 local functions = {}
 
 function functions.zoomIn(scale, trans)
-  --print("keyEVent zoom in")
   scale.x = scale.x * scale.factor
   scale.y = scale.y * scale.factor
 end
 
 function functions.zoomOut(scale, trans)
-  --print("keyEVent zoom out")
   scale.x = scale.x / scale.factor
   scale.y = scale.y / scale.factor
 end

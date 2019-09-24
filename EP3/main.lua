@@ -80,7 +80,8 @@ local trans = {x = 0, y = 0, factor = 10}
 function love.update(dt)
 
   for _, func in pairs(DICT) do
-    KEYEVENT:controller(func, scale, trans)
+    --print("for: scale = ", scale, " trans = ", trans)
+    KEYEVENT:controller(func, {scale, trans})
   end
   if KEY:keyDown("escape") then
     love.event.quit()
@@ -110,6 +111,7 @@ function love.draw()
     love.graphics.translate(y, x)
   end
 
+  -- Scaling and translating in player's perspectve
   love.graphics.scale(scale.x, scale.y)
   love.graphics.translate(trans.x, trans.y)
 
