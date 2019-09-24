@@ -38,73 +38,24 @@ function Entity:_init()
   self.charge = {strength = 1}
 end
 
+--- According to the name, delete the needless fields and set used fields
 function Entity:set(name)
-  --According to the name, delete the needless fields and set used fields
-  if name == 'player' then
+  local path = "entity/" .. name
+  local entity = require(path)
+
+  if entity.position then --field exists
     local x, y = generateRandomPosition()
     self.position.point = Vec(x, y)
-    self.movement.motion = Vec(math.random(OBJECT_SPEED/3, OBJECT_SPEED), math.random(OBJECT_SPEED/3, OBJECT_SPEED))
-    self.body = nil
-    self.control.acceleration = player.control.acceleration
-    self.control.max_speed = player.control.max_speed
-    self.field.strength = player.field.strength
-    self.charge = nil
-
-  elseif name == 'large' then
-    local x, y = generateRandomPosition()
-    self.position.point = Vec(x, y)
-    self.movement = nil
-    self.body.size = large.body.size
-    self.control = nil
-    self.field = nil
-    self.charge = nil
-
-  elseif name == 'simpleneg' then
-    local x, y = generateRandomPosition()
-    self.position.point = Vec(x, y)
-    self.movement.motion = Vec(math.random(OBJECT_SPEED/3, OBJECT_SPEED), math.random(OBJECT_SPEED/3, OBJECT_SPEED))
-    self.body = nil
-    self.control = nil
-    self.field = nil
-    self.charge.strength = simpleneg.charge.strength
-
-  elseif name == 'simplepos' then
-    local x, y = generateRandomPosition()
-    self.position.point = Vec(x, y)
-    self.movement.motion = Vec(math.random(OBJECT_SPEED/3, OBJECT_SPEED), math.random(OBJECT_SPEED/3, OBJECT_SPEED))
-    self.body = nil
-    self.control = nil
-    self.field = nil
-    self.charge.strength = simplepos.charge.strength
-
-  elseif name == 'slowpos' then
-    local x, y = generateRandomPosition()
-    self.position.point = Vec(x, y)
-    self.movement.motion = Vec(math.random(OBJECT_SPEED/10, OBJECT_SPEED/3), math.random(OBJECT_SPEED/10, OBJECT_SPEED/3))
-    self.body.size = slowpos.body.size
-    self.control = nil
-    self.field = slowpos.field
-    self.charge.strength = slowpos.charge.strength
-
-  elseif name == 'strongneg' then
-    local x, y = generateRandomPosition()
-    self.position.point = Vec(x, y)
-    self.movement = nil
-    self.body.size = strongneg.body.size
-    self.control = nil
-    self.field.strength = strongneg.field.strength
-    self.charge = nil
-
-  elseif name == 'strongpos' then
-    local x, y = generateRandomPosition()
-    self.position.point = Vec(x, y)
-    self.movement.motion = Vec(math.random(OBJECT_SPEED/5, OBJECT_SPEED/2), math.random(OBJECT_SPEED/5, OBJECT_SPEED/2))
-    self.body.size = strongpos.body.size
-    self.control = nil
-    self.field.strength = strongpos.field.strength
-    self.charge.strength = strongpos.charge.strength
-
+  else --field does not exist
+    self.position = nil
   end
+  if entity.movement == nil then --field does not exist
+    self.movement = nil
+  end
+  self.body = entity.body
+  self.control = entity.control
+  self.field = entity.field
+  self.charge = entity.charge
 end
 
 return Entity

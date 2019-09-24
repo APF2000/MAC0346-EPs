@@ -23,13 +23,10 @@ local controlled
 -- Store game objects and player properties
 local objects, player
 
+-- Translations and game scale variables
+local scale, trans
+
 --------[[ Auxiliary functions ]]----------------
-
-
---- Given a string with the name of an entity, returns a list with their properties.
-local function generateEntity(name)
-  return request "entity/" .. name
-end
 
 --- Creates and initializes all game objects according to the given scene, and
 --  return them as two lists - one with the player properties and the other with
@@ -70,11 +67,9 @@ function love.load()
   KEY:hook_love_events()
   W, H = love.graphics.getDimensions()
   player, objects = createObjects(SCENE)
+  scale = {x = 1, y = 1, factor = 1.02}
+  trans = {x = 0, y = 0, factor = 10}
 end
-
-local scale = {x = 1, y = 1, factor = 1.02}
-
-local trans = {x = 0, y = 0, factor = 10}
 
 
 function love.update(dt)
@@ -91,24 +86,16 @@ function love.update(dt)
 end
 
 
---- Detects when the player presses a keyboard button. Closes the game if it
---  was the ESC button. Moves controlled entity if arrows are pressed.
-function love.keypressed (key)
-  if key == 'escape' then
-    love.event.push 'quit'
-  end
-end
-
 function love.draw()
   local x, y
+
   -- Changing world origin to draw things centered on the screen
   love.graphics.push()
-  if controlled == 0 then
+  if controlled == 0 then --if there is no player, center window on the origin of the world
     love.graphics.translate(W/2, H/2)
-  else
-    --mudar isso pra posição do objeto controlado!!!
+  else --if there is a player, center window on the player
     x, y = player[1].position.point:get()
-    love.graphics.translate(y, x)
+    love.graphics.translate(W/2 - x, H/2 - y)
   end
 
   -- Scaling and translating in player's perspectve
@@ -118,7 +105,8 @@ function love.draw()
   -- Put all drawings here:
   love.graphics.setColor(1, 1, 1)
   love.graphics.circle('line', 0, 0, 1000) -- Map border
-  love.graphics.circle('fill', 0, 0, 8)
+  love.graphics.circle('fill', 0, 0, 8) -- Origem do mundo - para visualizar apenas
+  love.graphics.rectangle('fill', x, y, 8, 8) -- simboliza posição do jogador
   --
   love.graphics.pop()
 
