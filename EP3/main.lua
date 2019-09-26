@@ -101,8 +101,8 @@ function love.draw()
   love.graphics.pop()
 
   -- Scaling and translating in player's perspectve
-  love.graphics.scale(scale.x, scale.y)
   love.graphics.translate(trans.x, trans.y)
+  love.graphics.scale(scale.x, scale.y)
 
   -- Put all drawings here:
   love.graphics.setColor(1, 1, 1)
