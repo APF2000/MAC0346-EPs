@@ -108,7 +108,7 @@ function love.draw()
   love.graphics.setColor(1, 1, 1)
   love.graphics.circle('line', 0, 0, ringRadius) -- Map border
   love.graphics.circle('fill', 0, 0, 8) -- Origem do mundo - para visualizar apenas
-  -- Nome de variável sujeito a mudança
+  -- Nome de variável sujeito a mudança--
   local posx, posy = (W/2 - trans.x)/scale.x, (H/2 - trans.y)/scale.y
   love.graphics.rectangle('fill', posx, posy, 8, 8) -- simboliza posição do jogador
 
