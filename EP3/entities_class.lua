@@ -1,3 +1,5 @@
+-- luacheck: globals love
+
 -- Document creating class for entities
 
 local Entity = require 'class' ()
@@ -16,13 +18,17 @@ local OBJECT_SPEED = 164
 
 ----[[Auxiliary functions]]------
 
-local function generateRandomPosition()
-  local x = math.random(-999, 999)
+local function generateRandomPosition(rad)
+  --[[local x = math.random(-999, 999)
   local y = math.random(-999, 999)
   while math.sqrt(x^2 + y^2) >= 1000 do
     x = math.random(-999, 999)
     y = math.random(-999, 999)
-  end
+  end]]
+  repeat
+    x = math.random(-rad, rad)
+    y = math.random(-rad, rad)
+  until math.sqrt(x^2 + y^2) < rad
   return x, y
 end
 
@@ -38,13 +44,19 @@ function Entity:_init()
   self.charge = {strength = 1}
 end
 
+local function requireEntObj(name)
+  local auxName = string.format("entity/%s", name)
+  local loaded = love.filesystem.load(auxName)
+  return loaded()
+end
+
 --- According to the name, delete the needless fields and set used fields
 function Entity:set(name)
   local path = "entity/" .. name
   local entity = require(path)
 
   if entity.position then --field exists
-    local x, y = generateRandomPosition()
+    local x, y = generateRandomPosition(1000)
     self.position.point = Vec(x, y)
   else --field does not exist
     self.position = nil

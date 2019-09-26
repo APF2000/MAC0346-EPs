@@ -67,7 +67,7 @@ function love.load()
   KEY:hook_love_events()
   W, H = love.graphics.getDimensions()
   player, objects = createObjects(SCENE)
-  scale = {x = 1, y = 1, factor = 1.02}
+  scale = {x = 1, y = 1, factor = 1.01}
   trans = {x = 0, y = 0, factor = 10}
 end
 
@@ -85,6 +85,7 @@ function love.update(dt)
   KEY:update(dt)
 end
 
+local ringRadius = 1000
 
 function love.draw()
   local x, y
@@ -97,6 +98,7 @@ function love.draw()
     x, y = player[1].position.point:get()
     love.graphics.translate(W/2 - x, H/2 - y)
   end
+  love.graphics.pop()
 
   -- Scaling and translating in player's perspectve
   love.graphics.scale(scale.x, scale.y)
@@ -104,10 +106,10 @@ function love.draw()
 
   -- Put all drawings here:
   love.graphics.setColor(1, 1, 1)
-  love.graphics.circle('line', 0, 0, 1000) -- Map border
+  love.graphics.circle('line', 0, 0, ringRadius) -- Map border
   love.graphics.circle('fill', 0, 0, 8) -- Origem do mundo - para visualizar apenas
-  love.graphics.rectangle('fill', x, y, 8, 8) -- simboliza posição do jogador
-  --
-  love.graphics.pop()
+  -- Nome de variável sujeito a mudança
+  local posx, posy = (W/2 - trans.x)/scale.x, (H/2 - trans.y)/scale.y
+  love.graphics.rectangle('fill', posx, posy, 8, 8) -- simboliza posição do jogador
 
 end
