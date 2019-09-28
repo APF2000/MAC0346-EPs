@@ -7,6 +7,8 @@ local Entity = require "entities_class"
 
 local v2 = Vec()
 local v1 = Vec()
+v1:_init(1, 2)
+print(v1)
 
 local KEY = require "keyboard"
 local DICT = require "dictionary"
@@ -25,6 +27,7 @@ local objects, player
 
 -- Translations and game scale variables
 local scale, trans
+local position = Vec()
 
 --------[[ Auxiliary functions ]]----------------
 
@@ -66,9 +69,13 @@ end
 function love.load()
   KEY:hook_love_events()
   W, H = love.graphics.getDimensions()
+  print("W=", W, "H=", H)
+  print("position", position)
+
   player, objects = createObjects(SCENE)
   scale = {x = 1, y = 1, factor = 1.01}
   trans = {x = 0, y = 0, factor = 10}
+  position:_init(W/2, H/2)
 end
 
 
@@ -76,7 +83,7 @@ function love.update(dt)
 
   for _, func in pairs(DICT) do
     --print("for: scale = ", scale, " trans = ", trans)
-    KEYEVENT:controller(func, {scale, trans})
+    position = KEYEVENT:controller(func, {scale, trans, position})
   end
   if KEY:keyDown("escape") then
     love.event.quit()
@@ -86,7 +93,7 @@ function love.update(dt)
 end
 
 local ringRadius = 1000
-
+local count = 0
 function love.draw()
   local x, y
 
@@ -100,16 +107,36 @@ function love.draw()
   end
   love.graphics.pop()
 
-  -- Scaling and translating in player's perspectve
-  love.graphics.translate(trans.x, trans.y)
+  love.graphics.translate(W/2*(-scale.x + 1), H/2*(-scale.y + 1))
   love.graphics.scale(scale.x, scale.y)
 
-  -- Put all drawings here:
-  love.graphics.setColor(1, 1, 1)
-  love.graphics.circle('line', 0, 0, ringRadius) -- Map border
-  love.graphics.circle('fill', 0, 0, 8) -- Origem do mundo - para visualizar apenas
-  -- Nome de variável sujeito a mudança--
-  local posx, posy = (W/2 - trans.x)/scale.x, (H/2 - trans.y)/scale.y
-  love.graphics.rectangle('fill', posx, posy, 8, 8) -- simboliza posição do jogador
+  if count % 600 == 0 then
+    print(position)
+  end
+  count = count + 1
+  --player
+  if(position:length() > ringRadius) then
+    position = -position
+  end
+  love.graphics.rectangle("fill", position.x, position.y, 8, 8)
+  love.graphics.line(0, 0, position.x, position.y) --passa por (0,0) e position
 
+  --ring
+  love.graphics.circle("fill", 0, 0, 8)
+  love.graphics.circle("line", 0, 0, ringRadius)
 end
+--[[-- Scaling and translating in player's perspectve
+love.graphics.translate(trans.x + (W/2)*scale.x, trans.y + (H/2)*scale.y)
+--love.graphics.scale(scale.x, scale.y)
+print("scale=", scale.x, scale.y, scale.factor)
+print("trans=", trans.x, trans.y, trans.factor)
+
+-- Put all drawings here:
+love.graphics.setColor(1, 1, 1)
+love.graphics.circle('line', 0, 0, ringRadius / scale.x) -- Map border
+love.graphics.circle('fill', 0, 0, 8/scale.x) -- Origem do mundo - para visualizar apenas
+-- Nome de variável sujeito a mudança
+--local posx, posy = (W/2)*scale.x - trans.x, (H/2)*scale.y - trans.y
+print("pos = ", position)
+print("")
+love.graphics.rectangle('fill', position.x, position.y, 8/scale.x, 8/scale.y) -- simboliza posição do jogador]]
