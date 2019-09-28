@@ -5,6 +5,8 @@ local Entity = require "entities_class"
 
 --local class = require "class" -> Ainda não usado
 
+
+
 local v2 = Vec()
 local v1 = Vec()
 v1:_init(1, 2)
@@ -28,6 +30,8 @@ local objects, player
 -- Translations and game scale variables
 local scale, trans
 local position = Vec()
+local centerRing = Vec()
+local centerScreen = Vec()
 
 --------[[ Auxiliary functions ]]----------------
 
@@ -76,6 +80,8 @@ function love.load()
   scale = {x = 1, y = 1, factor = 1.01}
   trans = {x = 0, y = 0, factor = 10}
   position:_init(W/2, H/2)
+  centerRing:_init(0, 0)
+  centerScreen:_init(W/2, H/2)
 end
 
 
@@ -107,23 +113,40 @@ function love.draw()
   end
   love.graphics.pop()
 
-  love.graphics.translate(W/2*(-scale.x + 1), H/2*(-scale.y + 1))
+  local auxtransx = W/2*(-scale.x + 1)
+  local auxtransy = H/2*(-scale.y + 1)
+  love.graphics.translate(auxtransx, auxtransy)
   love.graphics.scale(scale.x, scale.y)
+
 
   if count % 600 == 0 then
     print(position)
   end
   count = count + 1
+
   --player
   if(position:length() > ringRadius) then
     position = -position
   end
-  love.graphics.rectangle("fill", position.x, position.y, 8, 8)
-  love.graphics.line(0, 0, position.x, position.y) --passa por (0,0) e position
 
+
+  --local delta = Vec()
+  --delta:_init(1 - 1/scale.x - position.x, 1 - 1/scale.y - position.y)
+  centerRing:_init(auxtransx/scale.x, auxtransy/scale.y)
+  --love.graphics.translate(delta.x, delta.y)
+  local auxVec = (-position) + (centerScreen) / scale.x
+  love.graphics.translate(auxVec.x, auxVec.y)
+  love.graphics.print("aaaaaaaa", 0, 0)
+  --love.graphics.translate(position.x, position.y)
+
+  local l = 8
+  love.graphics.rectangle("fill", -l/2, -l/2, l, l)
+  love.graphics.line(0, 0, -position.x, -position.y) --passa por (0,0) e position
+
+  centerRing = -position
   --ring
-  love.graphics.circle("fill", 0, 0, 8)
-  love.graphics.circle("line", 0, 0, ringRadius)
+  love.graphics.circle("fill", centerRing.x, centerRing.y, 8)
+  love.graphics.circle("line", centerRing.x, centerRing.y, ringRadius)
 end
 --[[-- Scaling and translating in player's perspectve
 love.graphics.translate(trans.x + (W/2)*scale.x, trans.y + (H/2)*scale.y)
