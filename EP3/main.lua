@@ -3,13 +3,6 @@ local Vec = require "common/vec"
 local SCENE = require "scene/test"
 local Entity = require "entities_class"
 
---local class = require "class" -> Ainda não usado
-
-local v2 = Vec()
-local v1 = Vec()
-v1:_init(1, 2)
-print(v1)
-
 local KEY = require "keyboard"
 local DICT = require "dictionary"
 local KEYEVENT = require "keyEvent"
@@ -130,7 +123,6 @@ function love.draw()
     plr:draw()
   end
   --
-
   love.graphics.pop()
 
 end
