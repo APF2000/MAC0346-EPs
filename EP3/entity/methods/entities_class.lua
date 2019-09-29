@@ -55,6 +55,7 @@ function Entity:set(name)
   else --field does not exist
     self.position = nil
   end
+
   if entity.movement == nil then --field does not exist
     self.movement = nil
   end
@@ -66,14 +67,14 @@ end
 
 --- Draws entity according to their properties:
 function Entity:draw()
-  local hasfield = 0 --flag to tell if entity has field property
-  local hasbody = 0 --flag to tell if entity has body property
+  local hasfield = false --flag to tell if entity has field property
+  local hasbody = false --flag to tell if entity has body property
 
   if self.position then --Entity has position
     local x,y = self.position.point:get() --store entitys position
 
     if self.field then --Entity has field property
-      hasfield = 1
+      hasfield = true
       -- Defining color of field:
       if self.field.strength < 0 then
         love.graphics.setColor(1, 0, 0) --red
@@ -87,9 +88,9 @@ function Entity:draw()
     end
 
     if self.body then --Entity has body property
-      hasbody = 1
+      hasbody = true
       -- Defining color of field:
-      if hasfield == 0 then --entity does't have field property
+      if hasfield then --entity does't have field property
         love.graphics.setColor(0, 1, 0) --green
       end
       -- Drawing field:
@@ -136,7 +137,7 @@ function Entity:draw()
       love.graphics.polygon('fill', x-3*math.cos(math.pi/4 + theta),y-3*math.sin(math.pi/4 + theta), x-3*math.cos(math.pi/4 - theta),y+3*math.sin(math.pi/4 - theta), x+5*math.cos(theta),y+5*math.sin(theta))
     end
 
-    if hasfield == 0 and hasbody == 0 then --draw default circle
+    if not hasfield and not hasbody then --draw default circle
       -- Defining color of default circle:
       love.graphics.setColor(0, 1, 0) --green
       -- Drawing default circle:
@@ -148,11 +149,20 @@ function Entity:draw()
 end
 
 --- Mooves entity according to the movement property:
-function Entity:move(dt)
+function Entity:movePlayer(dt)
   local x,y = self.position.point:get() --store entitys position
   local mov_x, mov_y = self.movement.motion:get() --stores player move direction
-
   self.position.point:set(x + mov_x*dt, y + mov_y*dt)
+
+  --esta sequencia faz o mesmo que o de cima (teoricamente)
+  local position = self.position.point
+  local velocity = self.movement.motion
+  local delta = velocity * dt
+  local next = position + delta
+
+  if next:length() < 1000 then
+    self.position.point = next
+  end
 end
 
 

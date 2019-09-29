@@ -16,9 +16,7 @@ local functions = {
 
 function KeyEvent:controller(func, parameters)
 
-  --print("params =", parameters, " unpack=", unpack(parameters))
   if KEYBOARD:allDown(DICT[func.name].list) then
-    print("all down", parameters[2])
     return functions[func.name](unpack(parameters))
   end
   return parameters[3]

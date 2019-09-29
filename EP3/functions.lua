@@ -30,11 +30,15 @@ function functions.down(_, trans, pos)
 end
 
 function functions.right(_, trans, pos)
-
+  auxVec:_init(trans.factor, 0)
+  print("right", pos + auxVec)
+  return pos + auxVec
 end
 
 function functions.left(_, trans, pos)
-
+  auxVec:_init(trans.factor, 0)
+  print("left", pos - auxVec)
+  return pos - auxVec
 end
 
 return functions
