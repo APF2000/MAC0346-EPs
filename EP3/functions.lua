@@ -14,7 +14,7 @@ function functions.zoomOut(scale, trans, pos)
   return pos
 end
 
-
+-- Inverted logic because of the coordinate system
 function functions.up(_, trans, pos)
   auxVec:_init(0, trans.factor)
   print("up", pos - auxVec)
@@ -22,6 +22,7 @@ function functions.up(_, trans, pos)
   return pos - auxVec
 end
 
+-- Inverted logic because of the coordinate system
 function functions.down(_, trans, pos)
   auxVec:_init(0, trans.factor)
   print("down", pos + auxVec)

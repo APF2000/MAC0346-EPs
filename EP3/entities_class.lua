@@ -19,12 +19,6 @@ local OBJECT_SPEED = 164
 ----[[Auxiliary functions]]------
 
 local function generateRandomPosition(rad)
-  --[[local x = math.random(-999, 999)
-  local y = math.random(-999, 999)
-  while math.sqrt(x^2 + y^2) >= 1000 do
-    x = math.random(-999, 999)
-    y = math.random(-999, 999)
-  end]]
   repeat
     x = math.random(-rad, rad)
     y = math.random(-rad, rad)
@@ -71,7 +65,7 @@ function Entity:set(name)
 end
 
 --- Draws entity according to their properties:
-function Entity:draw(self)
+function Entity:draw()
   local hasfield = 0 --flag to tell if entity has field property
   local hasbody = 0 --flag to tell if entity has body property
 
@@ -111,9 +105,35 @@ function Entity:draw(self)
       else
         love.graphics.setColor(0, 1, 0) --green
       end
-      -- Drawing field:
+      -- Drawing charge:
       love.graphics.circle('fill', x+8, y, 4)
       love.graphics.circle('fill', x-8, y, 4)
+    end
+
+    if self.control then --Entity has control property (its the player!)
+      local theta --store rotation of player
+      -- Defining color of player:
+      love.graphics.setColor(1, 1, 1) --white
+      -- Drawing player:
+      local mov_x, mov_y = self.movement.motion:get() --stores player move direction
+      if mov_x > 0 and mov_y > 0 then --rotating player 45 degrees counter clockwise
+        theta = math.pi/4
+      elseif mov_x == 0 and mov_y > 0 then --rotating player 90 degrees counter clockwise
+        theta = math.pi/2
+      elseif mov_x < 0 and mov_y > 0 then --rotating player 135 degrees counter clockwise
+        theta = math.pi*3/4
+      elseif mov_x < 0 and mov_y == 0 then --rotating player 180 degrees
+        theta = math.pi
+      elseif mov_x < 0 and mov_y < 0 then --rotating player 135 degrees clockwise
+        theta = -math.pi*3/4
+      elseif mov_x == 0 and mov_y < 0 then --rotating player 90 degrees clockwise
+        theta = -math.pi/2
+      elseif mov_x > 0 and mov_y < 0 then --rotating player 45 degrees clockwise
+        theta = -math.pi/4
+      else --paralel to x axis, on positive orientation
+        theta = 0
+      end
+      love.graphics.polygon('fill', x-3*math.cos(math.pi/4 + theta),y-3*math.sin(math.pi/4 + theta), x-3*math.cos(math.pi/4 - theta),y+3*math.sin(math.pi/4 - theta), x+5*math.cos(theta),y+5*math.sin(theta))
     end
 
     if hasfield == 0 and hasbody == 0 then --draw default circle
@@ -123,6 +143,16 @@ function Entity:draw(self)
       love.graphics.circle('line', x, y, 8)
     end
   end
+  -- Puts collor back to default:
+  love.graphics.setColor(1, 1, 1) --white
+end
+
+--- Mooves entity according to the movement property:
+function Entity:moove(dt)
+  local x,y = self.position.point:get() --store entitys position
+  local mov_x, mov_y = self.movement.motion:get() --stores player move direction
+
+  self.position.point:set(x + mov_x*dt, y + mov_y*dt)
 end
 
 

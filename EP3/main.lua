@@ -29,6 +29,9 @@ local objects, player
 local scale, trans
 local position = Vec()
 
+-- Size of the game ring:
+local ringRadius = 1000
+
 --------[[ Auxiliary functions ]]----------------
 
 --- Creates and initializes all game objects according to the given scene, and
@@ -52,8 +55,11 @@ local function createObjects(scene)
       table.insert(player, item) --appends item to the player list
     else --any other entity
       total = obj.n
-      count = 0
+      item:set(name)
+      table.insert(all_objects, item) --appends item to the all_objects list
+      count = 1
       while count < total do
+        item = Entity()
         item:set(name)
         table.insert(all_objects, item) --appends item to the all_objects list
         count = count + 1
@@ -80,7 +86,7 @@ end
 
 
 function love.update(dt)
-
+  --Dealing with user input:
   for _, func in pairs(DICT) do
     --print("for: scale = ", scale, " trans = ", trans)
     position = KEYEVENT:controller(func, {scale, trans, position})
@@ -90,53 +96,41 @@ function love.update(dt)
   end
 
   KEY:update(dt)
+  --
+
+  --Game mechanics:
+
+  --
 end
 
-local ringRadius = 1000
-local count = 0
+
 function love.draw()
-  local x, y
+  local x, y --store player position
+  local dx, dy --store scale factor
 
   -- Changing world origin to draw things centered on the screen
   love.graphics.push()
   if controlled == 0 then --if there is no player, center window on the origin of the world
-    love.graphics.translate(W/2, H/2)
+    love.graphics.scale(scale.x, scale.y)
+    love.graphics.translate((W/2)/scale.x, (H/2)/scale.y)
   else --if there is a player, center window on the player
     x, y = player[1].position.point:get()
-    love.graphics.translate(W/2 - x, H/2 - y)
+    dx = x - (W/2)/scale.x
+    dy = y - (H/2)/scale.y
+    love.graphics.scale(scale.x, scale.y)
+    love.graphics.translate(-dx, -dy)
   end
+
+  -- Put all drawings here:
+  love.graphics.circle('line', 0, 0, 1000) --Map border
+  for _, obj in ipairs(objects) do --drawing objescts:
+    obj:draw()
+  end
+  for _, plr in ipairs(player) do --drawing player:
+    plr:draw()
+  end
+  --
+
   love.graphics.pop()
 
-  love.graphics.translate(W/2*(-scale.x + 1), H/2*(-scale.y + 1))
-  love.graphics.scale(scale.x, scale.y)
-
-  if count % 600 == 0 then
-    print(position)
-  end
-  count = count + 1
-  --player
-  if(position:length() > ringRadius) then
-    position = -position
-  end
-  love.graphics.rectangle("fill", position.x, position.y, 8, 8)
-  love.graphics.line(0, 0, position.x, position.y) --passa por (0,0) e position
-
-  --ring
-  love.graphics.circle("fill", 0, 0, 8)
-  love.graphics.circle("line", 0, 0, ringRadius)
 end
---[[-- Scaling and translating in player's perspectve
-love.graphics.translate(trans.x + (W/2)*scale.x, trans.y + (H/2)*scale.y)
---love.graphics.scale(scale.x, scale.y)
-print("scale=", scale.x, scale.y, scale.factor)
-print("trans=", trans.x, trans.y, trans.factor)
-
--- Put all drawings here:
-love.graphics.setColor(1, 1, 1)
-love.graphics.circle('line', 0, 0, ringRadius / scale.x) -- Map border
-love.graphics.circle('fill', 0, 0, 8/scale.x) -- Origem do mundo - para visualizar apenas
--- Nome de variável sujeito a mudança
---local posx, posy = (W/2)*scale.x - trans.x, (H/2)*scale.y - trans.y
-print("pos = ", position)
-print("")
-love.graphics.rectangle('fill', position.x, position.y, 8/scale.x, 8/scale.y) -- simboliza posição do jogador]]
