@@ -148,7 +148,7 @@ function Entity:draw()
 end
 
 --- Mooves entity according to the movement property:
-function Entity:moove(dt)
+function Entity:move(dt)
   local x,y = self.position.point:get() --store entitys position
   local mov_x, mov_y = self.movement.motion:get() --stores player move direction
 
