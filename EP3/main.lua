@@ -2,7 +2,6 @@
 local Vec = require "common/vec"
 local SCENE = require "scene/test"
 local Entity = require "entities_class"
-
 local KEY = require "keyboard"
 local DICT = require "dictionary"
 local KEYEVENT = require "keyEvent"
