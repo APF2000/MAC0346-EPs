@@ -150,7 +150,7 @@ function Entity:draw()
   love.graphics.setColor(1, 1, 1) --white
 end
 
---- Mooves entity according to the movement property:
+--- Moves entity according to the movement property:
 function Entity:move(dt)
   if self.movement then --entity has movement property
     local x,y = self.position.point:get() --store entitys position

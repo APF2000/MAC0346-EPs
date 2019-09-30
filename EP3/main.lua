@@ -19,7 +19,7 @@ local objects, player
 
 -- Translations and game scale variables
 local scale, trans
-local position = Vec()
+--local position = Vec()
 
 -- Size of the game ring:
 local ringRadius = 1000
@@ -71,23 +71,13 @@ function love.load()
   print("position", position)
 
   player, objects = createObjects(SCENE)
-  scale = {x = 1, y = 1, factor = 1.01}
+  scale = {x = 1, y = 1, factor = 1.001}
   trans = {x = 0, y = 0, factor = 10}
-  position:_init(W/2, H/2)
+  --position:_init(W/2, H/2)
 end
 
 
 function love.update(dt)
-  --Dealing with user input:
-  for _, func in pairs(DICT) do
-    --print("for: scale = ", scale, " trans = ", trans)
-    position = KEYEVENT:controller(func, {scale, trans, position})
-  end
-  if KEY:keyDown("escape") then
-    love.event.quit()
-  end
-
-  KEY:update(dt)
   --
 
   -- Game mechanics:
@@ -123,6 +113,12 @@ function love.update(dt)
       -------------------------------------------
       ----MUDAR VELOCIDADE PELO INPUT AQUI!!!----
       -------------------------------------------
+      --Dealing with user input:
+      for _, func in pairs(DICT) do
+        --print("for: scale = ", scale, " trans = ", trans)
+        KEYEVENT:controller(func, {scale, trans, plr, dt})
+      end
+
 
       --Move object:
       plr:move(dt)
@@ -134,6 +130,12 @@ function love.update(dt)
       end
     end
   end
+
+  if KEY:keyDown("escape") then
+    love.event.quit()
+  end
+
+  KEY:update(dt)
   --
 end
 
