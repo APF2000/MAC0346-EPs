@@ -10,4 +10,3 @@ return {
     strength = 24
   },
 }
-

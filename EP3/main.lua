@@ -1,11 +1,10 @@
 -- luacheck: globals love
 local Vec = require "common/vec"
 local SCENE = require "scene/test"
-local Entity = require "entity/methods/entities_class"
+local Entity = require "entities_class"
 local KEY = require "keyboard"
 local DICT = require "dictionary"
 local KEYEVENT = require "keyEvent"
-local OBJ = require "objects"
 
 --------[[ Defining programm variables ]]--------
 
@@ -20,10 +19,47 @@ local objects, player
 
 -- Translations and game scale variables
 local scale, trans
-local position
+local position = Vec()
 
 -- Size of the game ring:
 local ringRadius = 1000
+
+--------[[ Auxiliary functions ]]----------------
+
+--- Creates and initializes all game objects according to the given scene, and
+--  return them as two lists - one with the player properties and the other with
+--  all other object properties. Also checks if there is a controllable entity
+--  and sets the flag 'controlled' accordingly.
+local function createObjects(scene)
+  local all_objects = {}
+  local player = {}
+  local name
+  local item
+  local total
+  local count
+  -- fazer lógica de criação das entidades
+  for _, obj in ipairs(scene) do
+    item = Entity()
+    name = obj.entity
+    if name == 'player' then
+      controlled = 1
+      item:set(name)
+      table.insert(player, item) --appends item to the player list
+    else --any other entity
+      total = obj.n
+      item:set(name)
+      table.insert(all_objects, item) --appends item to the all_objects list
+      count = 1
+      while count < total do
+        item = Entity()
+        item:set(name)
+        table.insert(all_objects, item) --appends item to the all_objects list
+        count = count + 1
+      end
+    end
+  end
+  return player, all_objects
+end
 
 
 --------[[ Main game functions ]]----------------
@@ -31,17 +67,20 @@ local ringRadius = 1000
 function love.load()
   KEY:hook_love_events()
   W, H = love.graphics.getDimensions()
+  print("W=", W, "H=", H)
+  print("position", position)
 
-  player, objects, controlled = OBJ.createObjects(SCENE, controlled)
+  player, objects = createObjects(SCENE)
   scale = {x = 1, y = 1, factor = 1.01}
   trans = {x = 0, y = 0, factor = 10}
-  position = Vec(W/2, H/2)
+  position:_init(W/2, H/2)
 end
 
 
 function love.update(dt)
   --Dealing with user input:
   for _, func in pairs(DICT) do
+    --print("for: scale = ", scale, " trans = ", trans)
     position = KEYEVENT:controller(func, {scale, trans, position})
   end
   if KEY:keyDown("escape") then
@@ -51,10 +90,50 @@ function love.update(dt)
   KEY:update(dt)
   --
 
-  --Game mechanics:
-  --[[pseudo-code:
-    --check
-  ]]
+  -- Game mechanics:
+  --Dealing with all objects except the player
+  for i, obj1 in ipairs(objects) do
+    for j, obj2 in ipairs(objects) do
+      --Change velocity vector due to force interaction:
+      if obj1.charge and obj1.movement then --has charge and movement properties
+        if obj2.field then --has field property
+          obj1:force(obj2, dt)
+        end
+      end
+      --Move object:
+      obj1:move(dt)
+      --Handle collisions:
+      if j>i then
+        if obj1.body then --has body property
+          obj1:collision(obj2)
+        end
+      end
+    end
+  end
+  --Dealing with the player
+  for i, plr in ipairs(player) do
+    for j, obj in ipairs(objects) do
+      --Change velocity vector due to force interaction:
+      if plr.charge and plr.movement then --has charge and movement properties
+        if obj.field then --has field property
+          plr:force(obj, dt)
+        end
+      end
+
+      -------------------------------------------
+      ----MUDAR VELOCIDADE PELO INPUT AQUI!!!----
+      -------------------------------------------
+
+      --Move object:
+      plr:move(dt)
+      --Handle collisions:
+      if j>i then
+        if plr.body then --has body property
+          plr:collision(obj)
+        end
+      end
+    end
+  end
   --
 end
 
@@ -78,7 +157,7 @@ function love.draw()
 
   -- Put all drawings here:
   love.graphics.circle('line', 0, 0, 1000) --Map border
-  for _, obj in ipairs(objects) do --drawing objects:
+  for _, obj in ipairs(objects) do --drawing objescts:
     obj:draw()
   end
   for _, plr in ipairs(player) do --drawing player:
