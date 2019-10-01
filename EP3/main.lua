@@ -83,16 +83,22 @@ function love.update(dt)
   for i, obj1 in ipairs(objects) do
     for j, obj2 in ipairs(objects) do
       --Change velocity vector due to force interaction:
-      if obj1.charge and obj1.movement then --has charge and movement properties
-        if obj2.field then --has field property
-          obj1:force(obj2, dt)
+      if j >= i then
+        if obj1.charge and obj1.movement then --has charge and movement properties
+          if obj2.field then --has field property
+            obj1:force(obj2, dt)
+          end
         end
       end
-      --Move object:
-      obj1:move(dt)
+    end
+    --Move object:
+    obj1:move(dt)
+  end
+  for i, obj1 in ipairs(objects) do
+    for j, obj2 in ipairs(objects) do
       --Handle collisions:
-      if j>i then
-        if obj2.body then --has body property
+      if j>=i then
+        if obj2.body and obj1.movement then
           obj1:collision(obj2)
         end
       end
@@ -102,9 +108,11 @@ function love.update(dt)
   for i, plr in ipairs(player) do
     for j, obj in ipairs(objects) do
       --Change velocity vector due to force interaction:
-      if plr.charge and plr.movement then --has charge and movement properties
-        if obj.field then --has field property
-          plr:force(obj, dt)
+      if j >= i then
+        if plr.charge and plr.movement then --has charge and movement properties
+          if obj.field then --has field property
+            plr:force(obj, dt)
+          end
         end
       end
       --Dealing with user input:
@@ -112,12 +120,16 @@ function love.update(dt)
         --print("for: scale = ", scale, " trans = ", trans)
         KEYEVENT:controller(func, {scale, trans, plr, dt})
       end
-      --Move object:
-      plr:move(dt)
-      --Handle collisions:
-      if j>i then
-        if obj.body then --has body property
-          plr:collision(obj)
+    end
+    --Move object:
+    plr:move(dt)
+    for i, plr in ipairs(player) do
+      for j, obj in ipairs(objects) do
+        --Handle collisions:
+        if j>=i then
+          if obj.body and plr.movement then --has body property
+            plr:collision(obj)
+          end
         end
       end
     end

@@ -13,7 +13,7 @@ local slowpos = require "entity/slowpos"
 local strongneg = require "entity/strongneg"
 local strongpos = require "entity/strongpos"
 
-local OBJECT_SPEED = 0
+local OBJECT_SPEED = 100
 local MAP_RADIUS = 1000
 
 
@@ -59,7 +59,9 @@ function Entity:set(name)
   if entity.movement == nil then --field does not exist
     self.movement = nil
   else --entity has movement
-    self.movement.motion:set(-OBJECT_SPEED, 0)
+    local rand_x = math.random(-OBJECT_SPEED, OBJECT_SPEED)
+    local rand_y = math.random(-OBJECT_SPEED, OBJECT_SPEED)
+    self.movement.motion:set(rand_x, rand_y)
   end
   self.body = entity.body
   self.control = entity.control
@@ -120,23 +122,7 @@ function Entity:draw()
       love.graphics.setColor(1, 1, 1) --white
       -- Drawing player:
       local mov_x, mov_y = self.movement.motion:get() --stores player move direction
-      if mov_x > 0 and mov_y > 0 then --rotating player 45 degrees counter clockwise
-        theta = math.pi/4
-      elseif math.abs(mov_x) <= threshold and math.abs(mov_x) >= -threshold and mov_y > 0 then --rotating player 90 degrees counter clockwise
-        theta = math.pi/2
-      elseif mov_x < 0 and mov_y > 0 then --rotating player 135 degrees counter clockwise
-        theta = math.pi*3/4
-      elseif mov_x < 0 and math.abs(mov_y) <= threshold and math.abs(mov_y) >= -threshold then --rotating player 180 degrees
-        theta = math.pi
-      elseif mov_x < 0 and mov_y < 0 then --rotating player 135 degrees clockwise
-        theta = -math.pi*3/4
-      elseif math.abs(mov_x) <= threshold and math.abs(mov_x) >= -threshold and mov_y < 0 then --rotating player 90 degrees clockwise
-        theta = -math.pi/2
-      elseif mov_x > 0 and mov_y < 0 then --rotating player 45 degrees clockwise
-        theta = -math.pi/4
-      else --paralel to x axis, on positive orientation
-        theta = 0
-      end
+      theta = math.atan2(mov_y, mov_x)
       love.graphics.polygon('fill', x-3*math.cos(math.pi/4 + theta),y-3*math.sin(math.pi/4 + theta), x-3*math.cos(math.pi/4 - theta),y+3*math.sin(math.pi/4 - theta), x+5*math.cos(theta),y+5*math.sin(theta))
     end
 
@@ -169,29 +155,26 @@ end
 --- Changes the velocity vector of a moving entity with charge (self) based on
 --  the force interection with an entity with field (other).
 function Entity:force(other, dt)
-  local Fx --x component of force vector
-  local Fy --y component of force vector
+  local F --force vector
   local C = 1000 --attraction canstant
   local f = other.field.strength
-  local xf, yf = other.position.point:get()
+  local vec_xf = other.position.point:clone()
   local q = self.charge.strength
-  local xq, yq = self.position.point:get()
-  local ax --x component of acceleration vector
-  local ay --y component of acceleration vector
+  local vec_xq = self.position.point:clone()
+  local a --acceleration vector
   local m --mass of charged unit
+  local auxVec = (vec_xq - vec_xf)
+  local length2 = auxVec:dot(auxVec)
   if self.body == nil then
     m = 1
   else
     m = self.body.size
   end
   --Calculating forces and accelerations:
-  Fx = 1--C*f*q*((xq - xf)/((xq - xf)*(xq - xf) + (yq - yf)*(yq - yf)) )
-  ax = Fx/m
-  Fy = 1--C*f*q*((yq - yf)/((xq - xf)*(xq - xf) + (yq - yf)*(yq - yf)) )
-  ay = Fy/m
+  F = auxVec*C*f*q/length2
+  a = F/m
   --Calculate velocity of moving entity with charge:
-  local vqx, vqy = self.movement.motion:get()
-  self.movement.motion:set(vqx + ax*dt, vqy + ax*dt)
+  self.movement.motion = self.movement.motion + a*dt
 end
 
 
@@ -215,7 +198,7 @@ function Entity:collision(other)
     --Restore to valid position:
     self.position.point = x2 + d*l
     --Correct velocity:
-    self.movement.motion = self.movement.motion - (self.movement.motion:dot(d))*d
+    self.movement.motion = self.movement.motion - d*(self.movement.motion:dot(d))
   end
 end
 
