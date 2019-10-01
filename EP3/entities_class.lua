@@ -13,7 +13,7 @@ local slowpos = require "entity/slowpos"
 local strongneg = require "entity/strongneg"
 local strongpos = require "entity/strongpos"
 
-local OBJECT_SPEED = 4
+local OBJECT_SPEED = 0
 local MAP_RADIUS = 1000
 
 
@@ -115,21 +115,22 @@ function Entity:draw()
 
     if self.control then --Entity has control property (its the player!)
       local theta --store rotation of player
+      local threshold = 0.000000000000001 --velocity threshold
       -- Defining color of player:
       love.graphics.setColor(1, 1, 1) --white
       -- Drawing player:
       local mov_x, mov_y = self.movement.motion:get() --stores player move direction
       if mov_x > 0 and mov_y > 0 then --rotating player 45 degrees counter clockwise
         theta = math.pi/4
-      elseif mov_x == 0 and mov_y > 0 then --rotating player 90 degrees counter clockwise
+      elseif math.abs(mov_x) <= threshold and math.abs(mov_x) >= -threshold and mov_y > 0 then --rotating player 90 degrees counter clockwise
         theta = math.pi/2
       elseif mov_x < 0 and mov_y > 0 then --rotating player 135 degrees counter clockwise
         theta = math.pi*3/4
-      elseif mov_x < 0 and mov_y == 0 then --rotating player 180 degrees
+      elseif mov_x < 0 and math.abs(mov_y) <= threshold and math.abs(mov_y) >= -threshold then --rotating player 180 degrees
         theta = math.pi
       elseif mov_x < 0 and mov_y < 0 then --rotating player 135 degrees clockwise
         theta = -math.pi*3/4
-      elseif mov_x == 0 and mov_y < 0 then --rotating player 90 degrees clockwise
+      elseif math.abs(mov_x) <= threshold and math.abs(mov_x) >= -threshold and mov_y < 0 then --rotating player 90 degrees clockwise
         theta = -math.pi/2
       elseif mov_x > 0 and mov_y < 0 then --rotating player 45 degrees clockwise
         theta = -math.pi/4
@@ -150,7 +151,7 @@ function Entity:draw()
   love.graphics.setColor(1, 1, 1) --white
 end
 
---- Moves entity according to the movement property:
+--- Mooves entity according to the movement property:
 function Entity:move(dt)
   if self.movement then --entity has movement property
     local x,y = self.position.point:get() --store entitys position
@@ -184,9 +185,9 @@ function Entity:force(other, dt)
     m = self.body.size
   end
   --Calculating forces and accelerations:
-  Fx = C*f*q*((xq - xf)/((xq - xf)*(xq - xf) + (yq - yf)*(yq - yf)) )
+  Fx = 1--C*f*q*((xq - xf)/((xq - xf)*(xq - xf) + (yq - yf)*(yq - yf)) )
   ax = Fx/m
-  Fy = C*f*q*((yq - yf)/((xq - xf)*(xq - xf) + (yq - yf)*(yq - yf)) )
+  Fy = 1--C*f*q*((yq - yf)/((xq - xf)*(xq - xf) + (yq - yf)*(yq - yf)) )
   ay = Fy/m
   --Calculate velocity of moving entity with charge:
   local vqx, vqy = self.movement.motion:get()
@@ -194,10 +195,28 @@ function Entity:force(other, dt)
 end
 
 
---- If entity has mass property (self), prevents that other entities (other)
---  occupy the same space.
+--- If entity has mass property (other), prevents that another entity (self)
+--  occupies the same space.
 function Entity:collision(other)
-  --
+  local r_s --store self's radius
+  if self.body then --has body
+    r_s = self.body.size
+  else
+    r_s = 8 --default size
+  end
+  local r_o = other.body.size
+  local x2 = self.position.point:clone()
+  local x1 = other.position.point:clone()
+  local delta = x2-x1
+  local l = (r_s + r_o) - delta:length()
+  local d = delta:normalized()
+
+  if delta:length() < r_s + r_o then --collision
+    --Restore to valid position:
+    self.position.point = x2 + d*l
+    --Correct velocity:
+    self.movement.motion = self.movement.motion - (self.movement.motion:dot(d))*d
+  end
 end
 
 return Entity

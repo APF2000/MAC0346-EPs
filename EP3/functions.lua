@@ -17,24 +17,28 @@ end
 
 -- Inverted logic because of the coordinate system
 function functions.up(_, trans, plr, dt)
-  delta:_init(0, plr.control.acceleration * dt * dt / 2)
-  plr.position.point = plr.position.point - delta
+  delta:_init(0, plr.control.acceleration*dt)
+  plr.movement.motion = plr.movement.motion - delta
+  plr.movement.motion:clamp(plr.control.max_speed)
 end
 
 -- Inverted logic because of the coordinate system
 function functions.down(_, trans, plr, dt)
-  delta:_init(0, plr.control.acceleration * dt * dt / 2)
-  plr.position.point = plr.position.point + delta
+  delta:_init(0, plr.control.acceleration*dt)
+  plr.movement.motion = plr.movement.motion + delta
+  plr.movement.motion:clamp(plr.control.max_speed)
 end
 
 function functions.right(_, trans, plr, dt)
-  delta:_init(plr.control.acceleration * dt * dt / 2, 0)
-  plr.position.point = plr.position.point + delta
+  delta:_init(plr.control.acceleration*dt, 0)
+  plr.movement.motion = plr.movement.motion + delta
+  plr.movement.motion:clamp(plr.control.max_speed)
 end
 
 function functions.left(_, trans, plr, dt)
-  delta:_init(plr.control.acceleration * dt * dt / 2, 0)
-  plr.position.point = plr.position.point - delta
+  delta:_init(plr.control.acceleration*dt, 0)
+  plr.movement.motion = plr.movement.motion - delta
+  plr.movement.motion:clamp(plr.control.max_speed)
 end
 
 return functions

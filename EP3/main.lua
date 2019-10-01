@@ -78,8 +78,6 @@ end
 
 
 function love.update(dt)
-  --
-
   -- Game mechanics:
   --Dealing with all objects except the player
   for i, obj1 in ipairs(objects) do
@@ -94,7 +92,7 @@ function love.update(dt)
       obj1:move(dt)
       --Handle collisions:
       if j>i then
-        if obj1.body then --has body property
+        if obj2.body then --has body property
           obj1:collision(obj2)
         end
       end
@@ -109,22 +107,16 @@ function love.update(dt)
           plr:force(obj, dt)
         end
       end
-
-      -------------------------------------------
-      ----MUDAR VELOCIDADE PELO INPUT AQUI!!!----
-      -------------------------------------------
       --Dealing with user input:
       for _, func in pairs(DICT) do
         --print("for: scale = ", scale, " trans = ", trans)
         KEYEVENT:controller(func, {scale, trans, plr, dt})
       end
-
-
       --Move object:
       plr:move(dt)
       --Handle collisions:
       if j>i then
-        if plr.body then --has body property
+        if obj.body then --has body property
           plr:collision(obj)
         end
       end
