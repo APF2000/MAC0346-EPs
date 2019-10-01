@@ -117,7 +117,6 @@ function Entity:draw()
 
     if self.control then --Entity has control property (its the player!)
       local theta --store rotation of player
-      local threshold = 0.000000000000001 --velocity threshold
       -- Defining color of player:
       love.graphics.setColor(1, 1, 1) --white
       -- Drawing player:

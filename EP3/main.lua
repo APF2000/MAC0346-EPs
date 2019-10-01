@@ -109,9 +109,16 @@ function love.update(dt)
     for j, obj in ipairs(objects) do
       --Change velocity vector due to force interaction:
       if j >= i then
+        --putting force on player
         if plr.charge and plr.movement then --has charge and movement properties
           if obj.field then --has field property
             plr:force(obj, dt)
+          end
+        end
+        --putting force from player, on all other units
+        if obj.charge and obj.movement then --has charge and movement properties
+          if plr.field then --has field property
+            obj:force(plr, dt)
           end
         end
       end
@@ -127,8 +134,13 @@ function love.update(dt)
       for j, obj in ipairs(objects) do
         --Handle collisions:
         if j>=i then
+          --player collides with object
           if obj.body and plr.movement then --has body property
             plr:collision(obj)
+          end
+          --object collides with player
+          if plr.body and obj.movement then --has body property
+            obj:collision(plr)
           end
         end
       end
