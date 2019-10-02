@@ -32,6 +32,7 @@ function Entity:_init()
   self.field = {strength = 1}
   self.charge = {strength = 1}
   self.hasTPed = false
+  self.countTime = 0
 end
 
 --[[local function requireEntObj(name)
@@ -138,21 +139,30 @@ end
 function Entity:move(dt)
   if self.movement then --entity has movement property
     local xp,yp = self.position.point:get() --store entitys position
-    local mov_x, mov_y = self.movement.motion:get() --stores player move direction
+    local vel = self.movement.motion
+    local mov_x, mov_y = vel:get() --stores player move direction
+    --local minSpeed = 10
+    local waitingTime = 6
+    --print("motion=", vel)
 
     self.position.point:set(xp + mov_x*dt, yp + mov_y*dt)
     xp,yp = self.position.point:get() --store entitys position
     if math.sqrt(xp^2 + yp^2) >= MAP_RADIUS then --is outside map limit
-      if not self.hasTPed then
+      if not self.hasTPed and self.countTime > waitingTime then
         self.position.point:set(-xp, -yp)
         self.hasTPed = true
       else
+        print("else, vel=", -vel)
+        self.movement.motion = -vel
         self.hasTPed = false
+        self.countTime = (self.countTime + dt) % (waitingTime + 1)
       end
     else
       self.hasTPed = false
+      self.countTime = (self.countTime + dt) % (waitingTime + 1)
     end
   end
+  print(self.countTime)
 end
 
 
