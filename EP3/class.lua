@@ -1,4 +1,4 @@
--- Copyright (C) 2009-2016 Steve Donovan, David Manura.
+--[[ Copyright (C) 2009-2016 Steve Donovan, David Manura.
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -6,10 +6,10 @@
 -- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 -- copies of the Software, and to permit persons to whom the Software is
 -- furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Software.
--- 
+--
 -- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,7 +28,7 @@
 -- that this implicitly brings in `pl.utils` as a dependency.
 --
 -- See the Guide for further @{01-introduction.md.Simplifying_Object_Oriented_Programming_in_Lua|discussion}
--- @module pl.class
+-- @module pl.class]]
 
 local error, getmetatable, io, pairs, rawget, rawset, setmetatable, tostring, type =
     _G.error, _G.getmetatable, _G.io, _G.pairs, _G.rawget, _G.rawset, _G.setmetatable, _G.tostring, _G.type
@@ -47,7 +47,7 @@ local function call_ctor (c,obj,...)
             parent_ctor = rawget(base,'_init')
         end
         if parent_ctor then
-            rawset(obj,'super',function(obj,...)
+            rawset(obj,'super',function(_,...)
                 call_ctor(base,obj,...)
             end)
         end
@@ -174,7 +174,7 @@ local function _class(base,c_arg,c)
     end
 
     -- expose a ctor which can be called by <classname>(<args>)
-    mt.__call = function(class_tbl,...)
+    mt.__call = function(_,...)
         local obj
         if rawget(c,'_create') then obj = c._create(...) end
         if not obj then obj = {} end
@@ -230,10 +230,10 @@ end
 -- @param c optional table to be used as class
 local class
 class = setmetatable({},{
-    __call = function(fun,...)
+    __call = function(_,...)
         return _class(...)
     end,
-    __index = function(tbl,key)
+    __index = function(_,key)
         if key == 'class' then
             io.stderr:write('require("pl.class").class is deprecated. Use require("pl.class")\n')
             return class
@@ -278,4 +278,3 @@ end
 
 
 return class
-

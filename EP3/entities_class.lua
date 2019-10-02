@@ -5,16 +5,10 @@
 local Entity = require 'class' ()
 
 local Vec = require "common/vec"
-local large = require "entity/large"
-local player = require "entity/player"
-local simpleneg = require "entity/simpleneg"
-local simplepos = require "entity/simplepos"
-local slowpos = require "entity/slowpos"
-local strongneg = require "entity/strongneg"
-local strongpos = require "entity/strongpos"
 
 local OBJECT_SPEED = 100
 local MAP_RADIUS = 1000
+local x, y
 
 
 ----[[Auxiliary functions]]------
@@ -37,13 +31,14 @@ function Entity:_init()
   self.control = {acceleration = 0.0, max_speed = 50.0}
   self.field = {strength = 1}
   self.charge = {strength = 1}
+  self.hasTPed = false
 end
 
-local function requireEntObj(name)
+--[[local function requireEntObj(name)
   local auxName = string.format("entity/%s", name)
   local loaded = love.filesystem.load(auxName)
   return loaded()
-end
+end]]
 
 --- According to the name, delete the needless fields and set used fields:
 function Entity:set(name)
@@ -51,7 +46,7 @@ function Entity:set(name)
   local entity = require(path)
 
   if entity.position then --field exists
-    local x, y = generateRandomPosition(MAP_RADIUS)
+    generateRandomPosition(MAP_RADIUS)
     self.position.point = Vec(x, y)
   else --field does not exist
     self.position = nil
@@ -71,14 +66,14 @@ end
 
 --- Draws entity according to their properties:
 function Entity:draw()
-  local hasfield = 0 --flag to tell if entity has field property
-  local hasbody = 0 --flag to tell if entity has body property
+  local hasfield = false --flag to tell if entity has field property
+  local hasbody = false --flag to tell if entity has body property
 
   if self.position then --Entity has position
-    local x,y = self.position.point:get() --store entitys position
+    local xp,yp = self.position.point:get() --store entitys position
 
     if self.field then --Entity has field property
-      hasfield = 1
+      hasfield = true
       -- Defining color of field:
       if self.field.strength < 0 then
         love.graphics.setColor(1, 0, 0) --red
@@ -88,17 +83,17 @@ function Entity:draw()
         love.graphics.setColor(0, 1, 0) --green
       end
       -- Drawing field:
-      love.graphics.circle('line', x, y, math.abs(self.field.strength))
+      love.graphics.circle('line', xp, yp, math.abs(self.field.strength))
     end
 
     if self.body then --Entity has body property
-      hasbody = 1
+      hasbody = true
       -- Defining color of field:
-      if hasfield == 0 then --entity does't have field property
+      if not hasfield then --entity does't have field property
         love.graphics.setColor(0, 1, 0) --green
       end
       -- Drawing field:
-      love.graphics.circle('fill', x, y, math.abs(self.body.size))
+      love.graphics.circle('fill', xp, yp, math.abs(self.body.size))
     end
 
     if self.charge then --Entity has charge property
@@ -111,8 +106,8 @@ function Entity:draw()
         love.graphics.setColor(0, 1, 0) --green
       end
       -- Drawing charge:
-      love.graphics.circle('fill', x+8, y, 4)
-      love.graphics.circle('fill', x-8, y, 4)
+      love.graphics.circle('fill', xp+8, yp, 4)
+      love.graphics.circle('fill', xp-8, yp, 4)
     end
 
     if self.control then --Entity has control property (its the player!)
@@ -122,14 +117,17 @@ function Entity:draw()
       -- Drawing player:
       local mov_x, mov_y = self.movement.motion:get() --stores player move direction
       theta = math.atan2(mov_y, mov_x)
-      love.graphics.polygon('fill', x-3*math.cos(math.pi/4 + theta),y-3*math.sin(math.pi/4 + theta), x-3*math.cos(math.pi/4 - theta),y+3*math.sin(math.pi/4 - theta), x+5*math.cos(theta),y+5*math.sin(theta))
+      love.graphics.polygon('fill',
+            xp-3*math.cos(math.pi/4 + theta),yp-3*math.sin(math.pi/4 + theta),
+            xp-3*math.cos(math.pi/4 - theta),yp+3*math.sin(math.pi/4 - theta),
+            xp+5*math.cos(theta),            yp+5*math.sin(theta))
     end
 
-    if hasfield == 0 and hasbody == 0 then --draw default circle
+    if not hasfield and not hasbody then --draw default circle
       -- Defining color of default circle:
       love.graphics.setColor(0, 1, 0) --green
       -- Drawing default circle:
-      love.graphics.circle('line', x, y, 8)
+      love.graphics.circle('line', xp, yp, 8)
     end
   end
   -- Puts collor back to default:
@@ -139,13 +137,20 @@ end
 --- Mooves entity according to the movement property:
 function Entity:move(dt)
   if self.movement then --entity has movement property
-    local x,y = self.position.point:get() --store entitys position
+    local xp,yp = self.position.point:get() --store entitys position
     local mov_x, mov_y = self.movement.motion:get() --stores player move direction
 
-    self.position.point:set(x + mov_x*dt, y + mov_y*dt)
-    x,y = self.position.point:get() --store entitys position
-    if math.sqrt(x^2 + y^2) > MAP_RADIUS then --is outside map limit
-      self.position.point:set(-x, -y)
+    self.position.point:set(xp + mov_x*dt, yp + mov_y*dt)
+    xp,yp = self.position.point:get() --store entitys position
+    if math.sqrt(xp^2 + yp^2) >= MAP_RADIUS then --is outside map limit
+      if not self.hasTPed then
+        self.position.point:set(-xp, -yp)
+        self.hasTPed = true
+      else
+        self.hasTPed = false
+      end
+    else
+      self.hasTPed = false
     end
   end
 end
