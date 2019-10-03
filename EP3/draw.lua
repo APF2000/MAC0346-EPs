@@ -15,15 +15,6 @@ function DRAW.player(xp, yp, mov)
         xp+5*math.cos(theta),            yp+5*math.sin(theta))
 end
 
-function DRAW.body(xp, yp, size, hasfield)
-  if not hasfield then
-    love.graphics.setColor(0, 1, 0) --green
-  end
-
-  love.graphics.circle('fill', xp, yp, math.abs(size))
-
-end
-
 function DRAW.field(xp, yp, strength)
   if strength < 0 then
     love.graphics.setColor(1, 0, 0) --red
@@ -34,7 +25,14 @@ function DRAW.field(xp, yp, strength)
   end
 
   love.graphics.circle('line', xp, yp, math.abs(strength))
+end
 
+function DRAW.body(xp, yp, size, hasfield)
+  if not hasfield then
+    love.graphics.setColor(0, 1, 0) --green
+  end
+
+  love.graphics.circle('fill', xp, yp, math.abs(size))
 end
 
 function DRAW.charge(xp, yp, strength)

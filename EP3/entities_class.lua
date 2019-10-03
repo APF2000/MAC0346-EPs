@@ -64,16 +64,16 @@ function Entity:draw()
         Draw.player(xp, yp, mov)
     end
 
-    if self.body then
-      hasbody = true
-      local size = self.body.size
-      Draw.body(xp, yp, size, hasfield)
-    end
-
     if self.field then
       hasfield = true
       local strength = self.field.strength
       Draw.field(xp, yp, strength)
+    end
+
+    if self.body then
+      hasbody = true
+      local size = self.body.size
+      Draw.body(xp, yp, size, hasfield)
     end
 
     if self.charge then
