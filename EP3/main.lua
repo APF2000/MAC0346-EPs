@@ -6,26 +6,11 @@ local DICT = require "dictionary"
 local KEYEVENT = require "keyEvent"
 local OBJ = require "objects"
 
---------[[ Defining programm variables ]]--------
-
--- Window resolution
 local W, H
-
--- Store game objects and player properties
-local player, controlled, objects
-
--- Game scale variable
 local scale
-
--- Size of the game ring:
 local ringRadius = 1000
 
---------[[ Auxiliary functions ]]----------------
-
-
-
-
---------[[ Main game functions ]]----------------
+local player, controlled, objects
 
 function love.load()
   KEY.hook_love_events()
@@ -121,10 +106,10 @@ function love.draw()
 
   -- Changing world origin to draw things centered on the screen
   love.graphics.push()
-  if not controlled then --if there is no player, center window on the origin of the world
+  if not controlled then -- center window on the origin of the world
     love.graphics.scale(scale.x, scale.y)
     love.graphics.translate((W/2)/scale.x, (H/2)/scale.y)
-  else --if there is a player, center window on the player
+  else -- center window on the player
     x, y = player[1].position.point:get()
     dx = x - (W/2)/scale.x
     dy = y - (H/2)/scale.y
@@ -132,12 +117,11 @@ function love.draw()
     love.graphics.translate(-dx, -dy)
   end
 
-  -- Put all drawings here:
-  love.graphics.circle('line', 0, 0, ringRadius) --Map border
-  for _, obj in ipairs(objects) do --drawing objescts:
+  love.graphics.circle('line', 0, 0, ringRadius)
+  for _, obj in ipairs(objects) do
     obj:draw()
   end
-  for _, plr in ipairs(player) do --drawing player:
+  for _, plr in ipairs(player) do
     plr:draw()
   end
   --

@@ -23,11 +23,11 @@ function OBJ.createObjects(scene)
     if name == 'player' then
       controlled = true
       item:set(name)
-      table.insert(player, item) --appends item to the player list
-    else --any other entity
+      table.insert(player, item)
+    else
       total = obj.n
       item:set(name)
-      table.insert(all_objects, item) --appends item to the all_objects list
+      table.insert(all_objects, item)
       count = 1
       while count < total do
         item = Entity()

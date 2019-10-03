@@ -1,17 +1,13 @@
 -- luacheck: globals love
 
--- Document creating class for entities
-
 local Entity = require 'class' ()
 
 local Vec = require "common/vec"
+local Draw = require "draw"
 
 local OBJECT_SPEED = 100
 local MAP_RADIUS = 1000
 local x, y
-
-
-----[[Auxiliary functions]]------
 
 local function generateRandomPosition(rad)
   repeat
@@ -21,10 +17,7 @@ local function generateRandomPosition(rad)
   return x, y
 end
 
-----[[Class functions]]------
-
 function Entity:_init()
-  --Initializing with default values
   self.position = {point = Vec(0, 0)}
   self.movement = {motion = Vec(0, 0)}
   self.body = {size = 8}
@@ -35,26 +28,19 @@ function Entity:_init()
   self.countTime = 0
 end
 
---[[local function requireEntObj(name)
-  local auxName = string.format("entity/%s", name)
-  local loaded = love.filesystem.load(auxName)
-  return loaded()
-end]]
-
---- According to the name, delete the needless fields and set used fields:
 function Entity:set(name)
   local path = "entity/" .. name
   local entity = require(path)
 
-  if entity.position then --field exists
+  if entity.position then
     generateRandomPosition(MAP_RADIUS)
     self.position.point = Vec(x, y)
-  else --field does not exist
+  else
     self.position = nil
   end
-  if entity.movement == nil then --field does not exist
+  if entity.movement == nil then
     self.movement = nil
-  else --entity has movement
+  else
     local rand_x = math.random(-OBJECT_SPEED, OBJECT_SPEED)
     local rand_y = math.random(-OBJECT_SPEED, OBJECT_SPEED)
     self.movement.motion:set(rand_x, rand_y)
@@ -65,69 +51,40 @@ function Entity:set(name)
   self.charge = entity.charge
 end
 
---- Draws entity according to their properties:
+--- Draws entity according to their properties
 function Entity:draw()
-  local hasfield = false --flag to tell if entity has field property
-  local hasbody = false --flag to tell if entity has body property
+  local hasfield = false
+  local hasbody = false
 
-  if self.position then --Entity has position
-    local xp,yp = self.position.point:get() --store entitys position
+  if self.position then
+    local xp,yp = self.position.point:get()
 
-    if self.field then --Entity has field property
-      hasfield = true
-      -- Defining color of field:
-      if self.field.strength < 0 then
-        love.graphics.setColor(1, 0, 0) --red
-      elseif self.field.strength > 0 then
-        love.graphics.setColor(0, 0, 1) --blue
-      else
-        love.graphics.setColor(0, 1, 0) --green
-      end
-      -- Drawing field:
-      love.graphics.circle('line', xp, yp, math.abs(self.field.strength))
+    if self.control then
+      local mov = self.movement.motion
+        Draw.player(xp, yp, mov)
     end
 
-    if self.body then --Entity has body property
+    if self.body then
       hasbody = true
-      -- Defining color of field:
-      if not hasfield then --entity does't have field property
-        love.graphics.setColor(0, 1, 0) --green
-      end
-      -- Drawing field:
-      love.graphics.circle('fill', xp, yp, math.abs(self.body.size))
+      local size = self.body.size
+      Draw.body(xp, yp, size, hasfield)
     end
 
-    if self.charge then --Entity has charge property
-      -- Defining color of charge:
-      if self.charge.strength < 0 then
-        love.graphics.setColor(1, 0, 0) --red
-      elseif self.charge.strength > 0 then
-        love.graphics.setColor(0, 0, 1) --blue
-      else
-        love.graphics.setColor(0, 1, 0) --green
-      end
-      -- Drawing charge:
-      love.graphics.circle('fill', xp+8, yp, 4)
-      love.graphics.circle('fill', xp-8, yp, 4)
+    if self.field then
+      hasfield = true
+      local strength = self.field.strength
+      Draw.field(xp, yp, strength)
     end
 
-    if self.control then --Entity has control property (its the player!)
-      local theta --store rotation of player
-      -- Defining color of player:
-      love.graphics.setColor(1, 1, 1) --white
-      -- Drawing player:
-      local mov_x, mov_y = self.movement.motion:get() --stores player move direction
-      theta = math.atan2(mov_y, mov_x)
-      love.graphics.polygon('fill',
-            xp-3*math.cos(math.pi/4 + theta),yp-3*math.sin(math.pi/4 + theta),
-            xp-3*math.cos(math.pi/4 - theta),yp+3*math.sin(math.pi/4 - theta),
-            xp+5*math.cos(theta),            yp+5*math.sin(theta))
+    if self.charge then
+      local strength = self.charge.strength
+      Draw.charge(xp, yp, strength)
     end
 
-    if not hasfield and not hasbody then --draw default circle
-      -- Defining color of default circle:
+    if not hasfield and not hasbody then -- default
+
       love.graphics.setColor(0, 1, 0) --green
-      -- Drawing default circle:
+
       love.graphics.circle('line', xp, yp, 8)
     end
   end
@@ -135,34 +92,21 @@ function Entity:draw()
   love.graphics.setColor(1, 1, 1) --white
 end
 
---- Mooves entity according to the movement property:
+-- Moves entity according to the movement property:
 function Entity:move(dt)
-  if self.movement then --entity has movement property
-    local xp,yp = self.position.point:get() --store entitys position
+  if self.movement then
+    local xp,yp = self.position.point:get()
     local vel = self.movement.motion
-    local mov_x, mov_y = vel:get() --stores player move direction
-    --local minSpeed = 10
-    local waitingTime = 6
-    --print("motion=", vel)
+    local mov_x, mov_y = vel:get()
 
     self.position.point:set(xp + mov_x*dt, yp + mov_y*dt)
-    xp,yp = self.position.point:get() --store entitys position
-    if math.sqrt(xp^2 + yp^2) >= MAP_RADIUS then --is outside map limit
-      if not self.hasTPed and self.countTime > waitingTime then
-        self.position.point:set(-xp, -yp)
-        self.hasTPed = true
-      else
-        print("else, vel=", -vel)
-        self.movement.motion = -vel
-        self.hasTPed = false
-        self.countTime = (self.countTime + dt) % (waitingTime + 1)
-      end
-    else
-      self.hasTPed = false
-      self.countTime = (self.countTime + dt) % (waitingTime + 1)
+    xp,yp = self.position.point:get()
+
+    if math.sqrt(xp^2 + yp^2) > MAP_RADIUS then
+      local dir = - self.position.point:normalized()
+      self.position.point = dir * MAP_RADIUS
     end
   end
-  print(self.countTime)
 end
 
 
@@ -184,31 +128,28 @@ function Entity:force(other, dt)
   else
     m = self.body.size
   end
-  --Calculating forces and accelerations:
+
   F = auxVec*C*f*q/length2
   a = F/m
-  --Calculate velocity of moving entity with charge:
+
   self.movement.motion = self.movement.motion + a*dt
 end
 
-
---- If entity has mass property (other), prevents that another entity (self)
---  occupies the same space.
 function Entity:collision(other)
-  local r_s --store self's radius
-  if self.body then --has body
-    r_s = self.body.size
+  local selfRadius
+  if self.body then
+    selfRadius = self.body.size
   else
-    r_s = 8 --default size
+    selfRadius = 8 --default
   end
   local r_o = other.body.size
   local x2 = self.position.point:clone()
   local x1 = other.position.point:clone()
   local delta = x2-x1
-  local l = (r_s + r_o) - delta:length()
+  local l = (selfRadius + r_o) - delta:length()
   local d = delta:normalized()
 
-  if delta:length() < r_s + r_o then --collision
+  if delta:length() < selfRadius + r_o then --collision
     --Restore to valid position:
     self.position.point = x2 + d*l
     --Correct velocity:
