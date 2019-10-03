@@ -12,7 +12,7 @@ function DRAW.player(xp, yp, mov)
   love.graphics.polygon('fill',
         xp-3*math.cos(math.pi/4 + theta),yp-3*math.sin(math.pi/4 + theta),
         xp-3*math.cos(math.pi/4 - theta),yp+3*math.sin(math.pi/4 - theta),
-        xp+5*math.cos(theta),            yp+5*math.sin(theta))
+        xp+5*math.cos(theta)            ,yp+5*math.sin(theta))
 end
 
 function DRAW.field(xp, yp, strength)

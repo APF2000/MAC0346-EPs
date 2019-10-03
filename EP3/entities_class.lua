@@ -58,12 +58,6 @@ function Entity:draw()
 
   if self.position then
     local xp,yp = self.position.point:get()
-
-    if self.control then
-      local mov = self.movement.motion
-        Draw.player(xp, yp, mov)
-    end
-
     if self.field then
       hasfield = true
       local strength = self.field.strength
@@ -79,6 +73,11 @@ function Entity:draw()
     if self.charge then
       local strength = self.charge.strength
       Draw.charge(xp, yp, strength)
+    end
+
+    if self.control then
+      local mov = self.movement.motion
+        Draw.player(xp, yp, mov)
     end
 
     if not hasfield and not hasbody then -- default
